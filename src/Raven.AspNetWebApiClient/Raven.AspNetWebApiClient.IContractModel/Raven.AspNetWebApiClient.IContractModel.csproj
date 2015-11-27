@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="IRequestModel.cs" />
     <Compile Include="IResponseModel.cs" />
-    <Compile Include="IResult.cs" />
     <Compile Include="KeyValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

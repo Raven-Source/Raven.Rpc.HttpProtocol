@@ -15,7 +15,7 @@ namespace Raven.AspNetWebApiClient.IContractModel
         /// <summary>
         /// 数据
         /// </summary>
-        TData Data { get; set; }
+        TData Body { get; set; }
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ namespace Raven.AspNetWebApiClient.IContractModel
         /// <summary>
         /// 数据
         /// </summary>
-        TData Data { get; set; }
+        TData Body { get; set; }
 
         /// <summary>
         /// 

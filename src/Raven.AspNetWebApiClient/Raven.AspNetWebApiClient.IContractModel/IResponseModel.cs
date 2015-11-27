@@ -12,7 +12,20 @@ namespace Raven.AspNetWebApiClient.IContractModel
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TCode"></typeparam>
-    public interface IResponseModel<TData, TCode> : IResult<TCode>
+    public interface IResponseModel<TCode>
+    {
+        /// <summary>
+        /// 结果编码，1为成功
+        /// </summary>
+        TCode Code { get; set; }
+    }
+
+    /// <summary>
+    /// IResponseModel
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
+    /// <typeparam name="TCode"></typeparam>
+    public interface IResponseModel<TData, TCode> : IResponseModel<TCode>
     {
         /// <summary>
         /// 数据
@@ -25,17 +38,12 @@ namespace Raven.AspNetWebApiClient.IContractModel
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TCode"></typeparam>
-    public class ResponseModelBase<TData, TCode> : IResponseModel<TData, TCode>
+    public class ResponseModelBase<TCode> : IResponseModel<TCode>
     {
         /// <summary>
         /// 
         /// </summary>
         public TCode Code { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public TData Data { get; set; }
 
         /// <summary>
         /// 
@@ -49,6 +57,19 @@ namespace Raven.AspNetWebApiClient.IContractModel
         [DataMember(Name = "Msg")]
         public string Message { get; set; }
     }
-    
+
+    /// <summary>
+    /// ResponseModelBase
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
+    /// <typeparam name="TCode"></typeparam>
+    public class ResponseModelBase<TData, TCode> : ResponseModelBase<TCode>
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public TData Data { get; set; }        
+    }
+
 
 }
