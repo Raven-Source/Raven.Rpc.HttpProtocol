@@ -27,12 +27,12 @@ namespace Raven.Rpc.IContractModel
         /// <summary>
         /// 数据
         /// </summary>
-        TData Body { get; set; }
+        public virtual TData Body { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        Header Header { get; set; }
+        public virtual Header Header { get; set; }
     }
 
     /// <summary>

@@ -10,7 +10,6 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// IResponseModel
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TCode"></typeparam>
     public interface IResponseModel<TCode>
     {
@@ -36,26 +35,25 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// ResponseModelBase
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TCode"></typeparam>
     public class ResponseModelBase<TCode> : IResponseModel<TCode>
     {
         /// <summary>
         /// 
         /// </summary>
-        public TCode Code { get; set; }
+        public virtual TCode Code { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember(Name = "Ext")]
-        public KeyValue<string, string>[] Extension { get; set; }
+        public virtual KeyValue<string, string>[] Extension { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember(Name = "Msg")]
-        public string Message { get; set; }
+        public virtual string Message { get; set; }
     }
 
     /// <summary>
@@ -68,7 +66,7 @@ namespace Raven.Rpc.IContractModel
         /// <summary>
         /// 
         /// </summary>
-        public TData Data { get; set; }        
+        public virtual TData Data { get; set; }        
     }
 
 
