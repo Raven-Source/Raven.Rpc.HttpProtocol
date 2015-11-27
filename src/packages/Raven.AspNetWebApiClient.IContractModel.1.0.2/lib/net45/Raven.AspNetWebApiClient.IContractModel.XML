@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Raven.AspNetWebApiClient.IContractModel</name>
+    </assembly>
+    <members>
+        <member name="T:Raven.AspNetWebApiClient.IContractModel.IResponseModel`2">
+            <summary>
+            Response实体
+            </summary>
+            <typeparam name="TData"></typeparam>
+            <typeparam name="TCode"></typeparam>
+        </member>
+        <member name="T:Raven.AspNetWebApiClient.IContractModel.IResult`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TCode"></typeparam>
+        </member>
+        <member name="T:Raven.AspNetWebApiClient.IContractModel.IResult">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Raven.AspNetWebApiClient.IContractModel.IResult.Message">
+            <summary>
+            错误消息
+            </summary>
+        </member>
+        <member name="P:Raven.AspNetWebApiClient.IContractModel.IResult`1.Code">
+            <summary>
+            结果编码，1为成功
+            </summary>
+        </member>
+        <member name="P:Raven.AspNetWebApiClient.IContractModel.IResponseModel`2.Data">
+            <summary>
+            数据
+            </summary>
+        </member>
+    </members>
+</doc>
