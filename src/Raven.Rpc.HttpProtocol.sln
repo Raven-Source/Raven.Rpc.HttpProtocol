@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C68A5C0A-508A-4271-BC22-36DB99D3F104}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.csproj", "{70775EE2-0B61-4E63-8A6A-576130230A6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.IContractModel", "Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj", "{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.PerformanceTest", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.PerformanceTest\Raven.Rpc.HttpProtocol.PerformanceTest.csproj", "{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPI", "Raven.Rpc.HttpProtocol.Test\Raven.WebAPI\Raven.WebAPI.csproj", "{40A9D509-3654-4C9C-AED3-3FBD001D4258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPIConsoleApp", "Raven.Rpc.HttpProtocol.Test\Raven.WebAPIConsoleApp\Raven.WebAPIConsoleApp.csproj", "{0BA7212C-584D-4196-A51A-A62BABC333E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.Test", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.Test.csproj", "{546A14CC-577B-411B-BC6F-605063D9446E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{546A14CC-577B-411B-BC6F-605063D9446E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{546A14CC-577B-411B-BC6F-605063D9446E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{546A14CC-577B-411B-BC6F-605063D9446E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{546A14CC-577B-411B-BC6F-605063D9446E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{40A9D509-3654-4C9C-AED3-3FBD001D4258} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{0BA7212C-584D-4196-A51A-A62BABC333E2} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{546A14CC-577B-411B-BC6F-605063D9446E} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+	EndGlobalSection
+EndGlobal
