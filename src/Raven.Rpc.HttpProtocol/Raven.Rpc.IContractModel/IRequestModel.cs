@@ -9,25 +9,29 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// IRequestModel
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
-    public interface IRequestModel<TData>
+    /// <typeparam name="THeader"></typeparam>
+    public interface IRequestModel<THeader, TBody>
     {
         /// <summary>
-        /// 数据
+        /// 
         /// </summary>
-        TData Body { get; set; }
+        TBody Body { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        THeader Header { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
-    public class RequestModelBase<TData>
+    public class RequestModel<TBody> : IRequestModel<Header, TBody>
     {
         /// <summary>
-        /// 数据
+        /// 
         /// </summary>
-        public virtual TData Body { get; set; }
+        public virtual TBody Body { get; set; }
 
         /// <summary>
         /// 

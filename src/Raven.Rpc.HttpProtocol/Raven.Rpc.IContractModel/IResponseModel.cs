@@ -35,13 +35,12 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// ResponseModelBase
     /// </summary>
-    /// <typeparam name="TCode"></typeparam>
-    public class ResponseModelBase<TCode> : IResponseModel<TCode>
+    public class ResponseModel : IResponseModel<int>
     {
         /// <summary>
         /// 
         /// </summary>
-        public virtual TCode Code { get; set; }
+        public virtual int Code { get; set; }
 
         /// <summary>
         /// 
@@ -60,13 +59,12 @@ namespace Raven.Rpc.IContractModel
     /// ResponseModelBase
     /// </summary>
     /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TCode"></typeparam>
-    public class ResponseModelBase<TData, TCode> : ResponseModelBase<TCode>
+    public class ResponseModel<TData> : ResponseModel, IResponseModel<TData, int>
     {
         /// <summary>
         /// 
         /// </summary>
-        public virtual TData Data { get; set; }        
+        public virtual TData Data { get; set; }
     }
 
 
