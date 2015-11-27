@@ -35,24 +35,24 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 
             Thread.Sleep(5000);
             taskList.Clear();
+            sw.Restart();
             for (var i = 0; i < speed; i++)
             {
                 var task = valuesApi_json.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
                 taskList.Add(task);
             }
-            sw.Restart();
             Task.WaitAll(taskList.ToArray());
             sw.Stop();
             Console.WriteLine("valuesApi_json:GetAsync:" + sw.ElapsedMilliseconds.ToString());
 
             Thread.Sleep(5000);
             taskList.Clear();
+            sw.Restart();
             for (var i = 0; i < speed; i++)
             {
                 var task = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
                 taskList.Add(task);
             }
-            sw.Restart();
             Task.WaitAll(taskList.ToArray());
             sw.Stop();
             Console.WriteLine("valuesApi_bson:GetAsync:" + sw.ElapsedMilliseconds.ToString());
