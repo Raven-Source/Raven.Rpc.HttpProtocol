@@ -10,13 +10,8 @@ namespace Raven.Rpc.IContractModel
     /// IRequestModel
     /// </summary>
     /// <typeparam name="THeader"></typeparam>
-    public interface IRequestModel<THeader, TBody>
+    public interface IRequestModel<THeader>
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        TBody Body { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
@@ -26,13 +21,8 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// 
     /// </summary>
-    public class RequestModel<TBody> : IRequestModel<Header, TBody>
+    public class RequestModel : IRequestModel<Header>
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual TBody Body { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
