@@ -58,7 +58,11 @@ namespace Raven.Rpc.HttpProtocol.WinAppTest
             }
 
             APIClient client = new APIClient(contentType);
-            var content = txtContent.Text;
+            string content = null;
+            if (method.ToUpper() != "GET" && method.ToUpper() != "DELETE")
+            {
+                content = txtContent.Text;
+            }
             var result = await client.SendAsync<byte[], string>(url, content, null, new System.Net.Http.HttpMethod(method));
             var resString = System.Text.Encoding.UTF8.GetString(result);
             txtRes.Text = resString;

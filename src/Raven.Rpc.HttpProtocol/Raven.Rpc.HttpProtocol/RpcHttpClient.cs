@@ -135,9 +135,9 @@ namespace Raven.Rpc.HttpProtocol
                         content = new ObjectContent<TData>(data, _mediaTypeFormatter);
                     }
                     request.Content = content;
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
                 request.RequestUri = new Uri(requestUrl);
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 using (HttpResponseMessage response = await client.SendAsync(request))
                 {
                     TResult result = await GetResultAsync<TResult>(response);
@@ -184,9 +184,9 @@ namespace Raven.Rpc.HttpProtocol
                         content = new ObjectContent<TData>(data, _mediaTypeFormatter);
                     }
                     request.Content = content;
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
                 request.RequestUri = new Uri(requestUrl);
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 using (HttpResponseMessage response = client.SendAsync(request).Result)
                 {
                     TResult result = GetResultAsync<TResult>(response).Result;

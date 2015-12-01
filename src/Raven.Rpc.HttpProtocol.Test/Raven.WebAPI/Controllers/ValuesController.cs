@@ -14,6 +14,7 @@ namespace Raven.WebAPIConsoleApp.Controllers
     public class ValuesController : ApiController
     {
         // GET api/values/5
+        [HttpPost]
         [HttpGet]
         public ResponseModel<User> Get()
         {

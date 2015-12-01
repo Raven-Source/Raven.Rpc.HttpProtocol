@@ -24,7 +24,7 @@
             <Border.BorderBrush>
                 <SolidColorBrush Color="#000"></SolidColorBrush>
             </Border.BorderBrush>
-            <TextBox x:Name="txtRes" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Text="｛Code:0，Data:{ID:0，Name:gggggdddffsdgd}，Message:null｝"/>
+            <TextBox x:Name="txtRes" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Text=""/>
         </Border>
         <Label x:Name="lblResponse" Content="Response" HorizontalAlignment="Left" Margin="407,124,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btnSubmit" Content="Submit" HorizontalAlignment="Left" Margin="299,84,0,0" VerticalAlignment="Top" Width="75"/>
