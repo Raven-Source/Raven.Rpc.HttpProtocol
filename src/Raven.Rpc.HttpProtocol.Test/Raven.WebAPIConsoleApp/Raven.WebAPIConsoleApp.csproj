@@ -78,8 +78,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Raven.WebAPI\Models\ResponseModel.cs">
+      <Link>Models\ResponseModel.cs</Link>
+    </Compile>
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Models\ResponseModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -87,6 +89,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
+      <Project>{ab1873c0-6ead-4089-a3b6-7cb8d68d92f5}</Project>
+      <Name>Raven.Rpc.IContractModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

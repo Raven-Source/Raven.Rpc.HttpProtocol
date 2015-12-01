@@ -14,16 +14,16 @@ namespace Raven.Rpc.HttpProtocol.Test
         public void Get()
         {
             ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.json);
-            ResponseModel result;
-            try
-            {
-                result = valuesApi.Get<ResponseModel>("api/Values/get/1", new Dictionary<string, string> { { "x", "b" }, { "y", "a" } });
-                ;
-            }
-            catch (Exception ex)
-            {
-                ;
-            }
+
+            var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
+            Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");
+
+            ResponseModel result = new ResponseModel();
+            result.Message = "111";
+            result = valuesApi.Post<ResponseModel, ResponseModel>("api/Values/get", result);
+            Assert.AreEqual(result.Message.Substring(0,3), "111");
+
+
 
             //result = valuesApi.Get<Result>("api/Values/1");
             //;

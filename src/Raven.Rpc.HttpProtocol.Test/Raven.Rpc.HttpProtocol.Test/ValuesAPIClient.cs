@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Raven.Rpc.HttpProtocol.Test
 {
-    public class ValuesAPIClient : RpcHttpClient<ResponseModel>
+    public class ValuesAPIClient : RpcHttpClient
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://127.0.0.1:9000/", timeout: 15000, mediaType: mediaType)
+            : base("http://localhost:24750/", timeout: 15000, mediaType: mediaType)
         {
         }
         

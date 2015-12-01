@@ -14,14 +14,17 @@ namespace Raven.WebAPIConsoleApp.Controllers
     public class ValuesController : ApiController
     {
         // GET api/values/5
-        public ResponseModel Get(int id)
+        [HttpGet]
+        public ResponseModel<User> Get()
         {
-            return new ResponseModel() { Data = new User { Name = "gggggdddd" } };
+            return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        public ResponseModel Post([FromBody]ResponseModel value)
         {
+            value.Message += DateTime.Now.ToString();
+            return value;
         }
 
         // PUT api/values/5
@@ -33,8 +36,8 @@ namespace Raven.WebAPIConsoleApp.Controllers
         public void Delete(int id)
         {
         }
-        
-        [HttpPost]
+
+        [HttpGet]
         public void Test()
         {
             int a = Convert.ToInt32("g");
@@ -52,14 +55,5 @@ namespace Raven.WebAPIConsoleApp.Controllers
             base.OnActionExecuting(actionContext);
         }
     }
-
-    public class User
-    {
-        public long ID
-        {
-            get; set;
-        }
-
-        public string Name { get; set; }
-    }
+    
 }

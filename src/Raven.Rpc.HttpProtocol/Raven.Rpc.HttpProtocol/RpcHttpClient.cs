@@ -12,7 +12,7 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public abstract class RpcHttpClient//<RT> //: IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+    public abstract class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
                                        //where RT : class, new()
     {
         private string _baseUrl;
@@ -140,7 +140,56 @@ namespace Raven.Rpc.HttpProtocol
                 request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 using (HttpResponseMessage response = await client.SendAsync(request))
                 {
-                    TResult result = GetResult<TResult>(response);
+                    TResult result = await GetResultAsync<TResult>(response);
+
+                    if (content != null)
+                    {
+                        content.Dispose();
+                    }
+                    return result as TResult;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="data"></param>
+        /// <param name="httpMethod"></param>
+        /// <param name="urlParameters"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public virtual TResult Send<TResult, TData>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+            where TResult : class
+            where TData : class
+        {
+            var client = _httpClient;
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+            HttpContent content = null;
+            using (HttpRequestMessage request = new HttpRequestMessage())
+            {
+                request.Method = httpMethod;
+                if (data != null)
+                {
+                    if (data is string)
+                    {
+                        content = new StringContent(data.ToString(), Encoding.UTF8);
+                    }
+                    else
+                    {
+                        content = new ObjectContent<TData>(data, _mediaTypeFormatter);
+                    }
+                    request.Content = content;
+                }
+                request.RequestUri = new Uri(requestUrl);
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
+                using (HttpResponseMessage response = client.SendAsync(request).Result)
+                {
+                    TResult result = GetResultAsync<TResult>(response).Result;
 
                     if (content != null)
                     {
@@ -216,7 +265,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual TResult Post<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -249,7 +298,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual async Task<TResult> PostAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -281,7 +330,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual TResult Post<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             return Post<TResult>(url, data, 0, data.Length, urlParameters, timeout);
         }
@@ -296,7 +345,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual async Task<TResult> PostAsync<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             return await PostAsync<TResult>(url, data, 0, data.Length, urlParameters, timeout);
         }
@@ -313,7 +362,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual TResult Post<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -348,7 +397,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
         public virtual async Task<TResult> PostAsync<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -381,7 +430,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual TResult Post<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -413,7 +462,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual async Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -446,7 +495,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual TResult Put<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -479,7 +528,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual async Task<TResult> PutAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -511,7 +560,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual TResult Put<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -543,7 +592,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual async Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -574,7 +623,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual TResult Delete<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -602,7 +651,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="timeout"></param>
         /// <returns></returns>
         public virtual async Task<TResult> DeleteAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where TResult : class, new()
+            where TResult : class
         {
             //using (var client = new HttpClient())
             //{
@@ -805,7 +854,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="result"></param>
         /// <param name="httpResponse"></param>
         protected virtual void ErrorResponseHandler<TResult>(ref TResult result, HttpResponseMessage httpResponse)
-        //where TResult : class, new()
+            where TResult : class
         {
         }
 

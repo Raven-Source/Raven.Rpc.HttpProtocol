@@ -6,7 +6,22 @@ using System.Web;
 
 namespace Raven.WebAPI.Models
 {
-    public class ResponseModel : ResponseModel<object, int>
+    public class ResponseModel : Raven.Rpc.IContractModel.ResponseModel<int>
     {
+    }
+
+    public class ResponseModel<T> : Raven.Rpc.IContractModel.ResponseModel<T, int>
+    {
+    }
+
+
+    public class User
+    {
+        public long ID
+        {
+            get; set;
+        }
+
+        public string Name { get; set; }
     }
 }

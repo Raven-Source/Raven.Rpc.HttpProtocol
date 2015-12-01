@@ -7,16 +7,18 @@ using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
+using Raven.WebAPI.Models;
 
 namespace Raven.WebAPI.Controllers
 {
     public class ValuesController : ApiController
     {
         // GET api/values/5
-        [HttpPost]
-        public ResponseModel Get()
+        [HttpGet]
+        public string Get()
         {
-            return new ResponseModel() { Data = new User { Name = "gggggdddd" } };
+            //return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
+            return "gg";
         }
 
         // POST api/values
@@ -36,12 +38,12 @@ namespace Raven.WebAPI.Controllers
         {
         }
         
-        [HttpPost]
+        [HttpGet]
         public void Test()
         {
             int a = Convert.ToInt32("g");
         }
-
+        
 
     }
 
@@ -55,13 +57,4 @@ namespace Raven.WebAPI.Controllers
         }
     }
 
-    public class User
-    {
-        public long ID
-        {
-            get; set;
-        }
-
-        public string Name { get; set; }
-    }
 }
