@@ -13,14 +13,17 @@ namespace Raven.WebAPI.Controllers
     public class ValuesController : ApiController
     {
         // GET api/values/5
-        public ResponseModel Get(int id)
+        [HttpPost]
+        public ResponseModel Get()
         {
             return new ResponseModel() { Data = new User { Name = "gggggdddd" } };
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        public ResponseModel Post([FromBody]ResponseModel value)
         {
+            value.Message += DateTime.Now.ToString();
+            return value;
         }
 
         // PUT api/values/5

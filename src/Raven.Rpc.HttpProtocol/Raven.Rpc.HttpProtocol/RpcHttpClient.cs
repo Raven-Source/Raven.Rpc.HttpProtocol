@@ -12,11 +12,13 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public abstract class RpcHttpClient<RT> : IRpcHttpClient, IRpcHttpClientAsync
-            where RT : class, new()
+    public abstract class RpcHttpClient//<RT> //: IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+                                       //where RT : class, new()
     {
         private string _baseUrl;
         private int _timeout;
+        private HttpClient _httpClient;
+        private string _mediaType;
         private MediaTypeFormatter _mediaTypeFormatter;
         private MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
@@ -28,6 +30,8 @@ namespace Raven.Rpc.HttpProtocol
 
         private MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
 
+        private static Encoding defaultEncoding = Encoding.UTF8;
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -38,8 +42,11 @@ namespace Raven.Rpc.HttpProtocol
         {
             this._baseUrl = baseUrl;
             this._timeout = timeout;
+            _mediaType = mediaType;
             _mediaTypeFormatter = CreateMediaTypeFormatter(mediaType);
             _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue(mediaType);
+            _httpClient = new HttpClient();
+            InitHttpClient(timeout, _httpClient);
         }
 
         /// <summary>
@@ -86,160 +93,218 @@ namespace Raven.Rpc.HttpProtocol
                 client.Timeout = TimeSpan.FromMilliseconds(this._timeout);
             }
 
-            client.BaseAddress = new Uri(this._baseUrl);
+            if (!string.IsNullOrWhiteSpace(_baseUrl))
+            {
+                client.BaseAddress = new Uri(_baseUrl);
+            }
             client.DefaultRequestHeaders.Accept.Add(_mediaTypeWithQualityHeaderValue);
             client.DefaultRequestHeaders.Connection.Add("keep-alive");
             DefaultRequestHeadersHandler(client.DefaultRequestHeaders);
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="data"></param>
+        /// <param name="httpMethod"></param>
+        /// <param name="urlParameters"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public virtual async Task<TResult> SendAsync<TResult, TData>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+            where TResult : class
+            where TData : class
+        {
+            var client = _httpClient;
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+            HttpContent content = null;
+            using (HttpRequestMessage request = new HttpRequestMessage())
+            {
+                request.Method = httpMethod;
+                if (data != null)
+                {
+                    if (data is string)
+                    {
+                        content = new StringContent(data.ToString(), Encoding.UTF8);
+                    }
+                    else
+                    {
+                        content = new ObjectContent<TData>(data, _mediaTypeFormatter);
+                    }
+                    request.Content = content;
+                }
+                request.RequestUri = new Uri(requestUrl);
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
+                using (HttpResponseMessage response = await client.SendAsync(request))
+                {
+                    TResult result = GetResult<TResult>(response);
+
+                    if (content != null)
+                    {
+                        content.Dispose();
+                    }
+                    return result as TResult;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual T Get<T>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Get<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //InitHttpClient(timeout, client);
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpResponseMessage response = client.GetAsync(requestUrl).Result)
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpResponseMessage response = client.GetAsync(requestUrl).Result)
-                {
-                    T result = GetResult<T>(response);
-                    return result as T;
-                }
+                TResult result = GetResult<TResult>(response);
+                return result as TResult;
             }
+            //}
         }
 
         /// <summary>
         /// Get
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<T> GetAsync<T>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> GetAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpResponseMessage response = await client.GetAsync(requestUrl))
             {
-                InitHttpClient(timeout, client);
+                TResult result = await GetResultAsync<TResult>(response);
+                return result as TResult;
+            }
+            //}
+        }
 
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
+        /// <summary>
+        /// Post
+        /// </summary>
+        /// <typeparam name="TData">提交数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
+        /// <param name="url">请求Url</param>
+        /// <param name="data">数据</param>
+        /// <param name="urlParameters">url parameter 数据</param>
+        /// <param name="timeout">超时时间</param>
+        /// <returns></returns>
+        public virtual TResult Post<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
+        {
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
 
-                using (HttpResponseMessage response = await client.GetAsync(requestUrl))
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = CreateContent(data))
+            {
+                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
                 {
-                    T result = await GetResultAsync<T>(response);
-                    return result as T;
+                    TResult result = GetResult<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="D">提交数据类型</typeparam>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TData">提交数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual T Post<D, T>(string url, D data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PostAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = CreateContent(data))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<D>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
                 {
-                    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                    {
-                        T result = GetResult<T>(response);
-                        return result as T;
-                    }
+                    TResult result = await GetResultAsync<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="D">提交数据类型</typeparam>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual async Task<T> PostAsync<D, T>(string url, D data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Post<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
-            {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<D>(data, _mediaTypeFormatter))
-                {
-                    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                    {
-                        T result = await GetResultAsync<T>(response);
-                        return result as T;
-                    }
-                }
-            }
+            return Post<TResult>(url, data, 0, data.Length, urlParameters, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual T Post<T>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PostAsync<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            return Post<T>(url, data, 0, data.Length, urlParameters, timeout);
+            return await PostAsync<TResult>(url, data, 0, data.Length, urlParameters, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
-        /// <param name="urlParameters">url parameter 数据</param>
-        /// <param name="timeout">超时时间</param>
-        /// <returns></returns>
-        public virtual async Task<T> PostAsync<T>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
-        {
-            return await PostAsync<T>(url, data, 0, data.Length, urlParameters, timeout);
-        }
-
-        /// <summary>
-        /// Post
-        /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="offset">偏移</param>
@@ -247,32 +312,34 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual T Post<T>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Post<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = new ByteArrayContent(data, offset, count))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ByteArrayContent(data, offset, count))
+                content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
+                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
-                    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                    {
-                        T result = GetResult<T>(response);
-                        return result as T;
-                    }
+                    TResult result = GetResult<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="offset">偏移</param>
@@ -280,260 +347,278 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual async Task<T> PostAsync<T>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PostAsync<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = new ByteArrayContent(data, offset, count))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ByteArrayContent(data, offset, count))
+                content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
+                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
-                    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                    {
-                        T result = await GetResultAsync<T>(response);
-                        return result as T;
-                    }
+                    TResult result = await GetResultAsync<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual T Post<T>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Post<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
                 {
-                    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                    {
-                        T result = GetResult<T>(response);
-                        return result as T;
-                    }
+                    TResult result = GetResult<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Post
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<T> PostAsync<T>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
                 {
-                    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                    {
-                        T result = await GetResultAsync<T>(response);
-                        return result as T;
-                    }
+                    TResult result = await GetResultAsync<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Put
         /// </summary>
-        /// <typeparam name="D">提交数据类型</typeparam>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TData">提交数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual T Put<D, T>(string url, D data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Put<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = CreateContent(data))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<D>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
                 {
-                    using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
-                    {
-                        T result = GetResult<T>(response);
-                        return result as T;
-                    }
+                    TResult result = GetResult<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Put
         /// </summary>
-        /// <typeparam name="D">提交数据类型</typeparam>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TData">提交数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<T> PutAsync<D, T>(string url, D data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PutAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = CreateContent(data))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<D>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
                 {
-                    using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
-                    {
-                        T result = await GetResultAsync<T>(response);
-                        return result as T;
-                    }
+                    TResult result = await GetResultAsync<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Put
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">url parameter 数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual T Put<T>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Put<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = CreateContent(data))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
                 {
-                    using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
-                    {
-                        T result = GetResult<T>(response);
-                        return result as T;
-                    }
+                    TResult result = GetResult<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Put
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="data">url parameter 数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<T> PutAsync<T>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+                using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
                 {
-                    using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
-                    {
-                        T result = await GetResultAsync<T>(response);
-                        return result as T;
-                    }
+                    TResult result = await GetResultAsync<TResult>(response);
+                    return result as TResult;
                 }
             }
+            //}
         }
 
         /// <summary>
         /// Delete
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual T Delete<T>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual TResult Delete<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpResponseMessage response = client.DeleteAsync(requestUrl).Result)
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpResponseMessage response = client.DeleteAsync(requestUrl).Result)
-                {
-                    T result = GetResult<T>(response);
-                    return result as T;
-                }
+                TResult result = GetResult<TResult>(response);
+                return result as TResult;
             }
+            //}
         }
 
         /// <summary>
         /// Delete
         /// </summary>
-        /// <typeparam name="T">返回数据类型</typeparam>
+        /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="url">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<T> DeleteAsync<T>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
-            where T : class, new()
+        public virtual async Task<TResult> DeleteAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+            where TResult : class, new()
         {
-            using (var client = new HttpClient())
+            //using (var client = new HttpClient())
+            //{
+            //    InitHttpClient(timeout, client);
+
+            var client = _httpClient;
+
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+
+            using (HttpResponseMessage response = await client.DeleteAsync(requestUrl))
             {
-                InitHttpClient(timeout, client);
-
-                string requestUrl = _baseUrl + url;
-                CreateUrlParams(urlParameters, ref requestUrl);
-
-                using (HttpResponseMessage response = await client.DeleteAsync(requestUrl))
-                {
-                    T result = await GetResultAsync<T>(response);
-                    return result as T;
-                }
+                TResult result = await GetResultAsync<TResult>(response);
+                return result as TResult;
             }
+            //}
         }
 
         /// <summary>
@@ -582,24 +667,63 @@ namespace Raven.Rpc.HttpProtocol
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private HttpContent CreateContent<TData>(TData data)
+        {
+            HttpContent httpContent = null;
+            var fullName = typeof(TData).FullName;
+            switch (fullName)
+            {
+                case "System.String":
+                    httpContent = new StringContent(data.ToString(), defaultEncoding, _mediaType);
+                    break;
+                case "System.Byte[]":
+                    httpContent = new ByteArrayContent(data as byte[]);
+                    break;
+                default:
+                    httpContent = new ObjectContent<TData>(data, _mediaTypeFormatter);
+                    break;
+            }
+
+            return httpContent;
+
+        }
+
+        /// <summary>
         /// 获取Result对象
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="response"></param>
         /// <returns></returns>
-        private T GetResult<T>(HttpResponseMessage response)
-            where T : class, new()
+        private TResult GetResult<TResult>(HttpResponseMessage response)
+            where TResult : class
         {
-            T result;
+            TResult result;
             if (response.IsSuccessStatusCode)
             {
-                result = response.Content.ReadAsAsync<T>(_mediaTypeFormatterArray).Result;
+                var fullName = typeof(TResult).FullName;
+                switch (fullName)
+                {
+                    case "System.String":
+                        result = response.Content.ReadAsStringAsync().Result as TResult;
+                        break;
+                    case "System.Byte[]":
+                        result = response.Content.ReadAsByteArrayAsync().Result as TResult;
+                        break;
+                    default:
+                        result = response.Content.ReadAsAsync<TResult>(_mediaTypeFormatterArray).Result;
+                        break;
+                }
                 return result;
             }
             else
             {
-                result = default(T);
-                ErrorResponseHandler<T>(ref result, response);
+                result = default(TResult);
+                ErrorResponseHandler<TResult>(ref result, response);
                 return result;
             }
         }
@@ -607,25 +731,40 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 获取Result对象
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="response"></param>
         /// <returns></returns>
-        private async Task<T> GetResultAsync<T>(HttpResponseMessage response)
-            where T : class, new()
+        private async Task<TResult> GetResultAsync<TResult>(HttpResponseMessage response)
+            where TResult : class
         {
-            T result;
+            TResult result;
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadAsAsync<T>(_mediaTypeFormatterArray);
+                var fullName = typeof(TResult).FullName;
+                switch (fullName)
+                {
+                    case "System.String":
+                        result = await response.Content.ReadAsStringAsync() as TResult;
+                        break;
+                    case "System.Byte[]":
+                        result = await response.Content.ReadAsByteArrayAsync() as TResult;
+                        break;
+                    default:
+                        result = await response.Content.ReadAsAsync<TResult>(_mediaTypeFormatterArray);
+                        break;
+                }
                 return result;
+                //result = await response.Content.ReadAsAsync<TResult>(_mediaTypeFormatterArray);
+                //return result;
             }
             else
             {
-                result = default(T);
-                ErrorResponseHandler<T>(ref result, response);
+                result = default(TResult);
+                ErrorResponseHandler<TResult>(ref result, response);
                 return result;
             }
         }
+
         /// <summary>
         /// 添加默认参数
         /// </summary>
@@ -662,11 +801,11 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 异常处理
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="result"></param>
         /// <param name="httpResponse"></param>
-        protected virtual void ErrorResponseHandler<T>(ref T result, HttpResponseMessage httpResponse)
-            where T : class, new()
+        protected virtual void ErrorResponseHandler<TResult>(ref TResult result, HttpResponseMessage httpResponse)
+        //where TResult : class, new()
         {
         }
 
@@ -675,5 +814,50 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         protected abstract IDictionary<string, string> FurnishDefaultParameters();
 
+        #region IDispose
+
+        private bool isDisposed = false;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_httpClient != null)
+                    {
+                        _httpClient.Dispose();
+                    }
+                    _httpClient = null;
+                }
+
+                _mediaTypeFormatter = null;
+                _mediaTypeFormatterArray = null;
+            }
+            isDisposed = true;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ~RpcHttpClient()
+        {
+            Dispose(false);
+        }
     }
 }

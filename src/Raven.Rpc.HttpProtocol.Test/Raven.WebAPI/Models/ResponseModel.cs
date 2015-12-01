@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Raven.WebAPI.Models
 {
-    public class ResponseModel : ResponseModelBase<object, int>
+    public class ResponseModel : ResponseModel<object, int>
     {
     }
 }

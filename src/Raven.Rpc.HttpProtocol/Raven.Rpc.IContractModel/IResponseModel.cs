@@ -33,14 +33,15 @@ namespace Raven.Rpc.IContractModel
     }
 
     /// <summary>
-    /// ResponseModelBase
+    /// ResponseModel
     /// </summary>
-    public class ResponseModel : IResponseModel<int>
+    /// <typeparam name="TCode"></typeparam>
+    public class ResponseModel<TCode> : IResponseModel<TCode>
     {
         /// <summary>
         /// 
         /// </summary>
-        public virtual int Code { get; set; }
+        public virtual TCode Code { get; set; }
 
         /// <summary>
         /// 
@@ -54,12 +55,13 @@ namespace Raven.Rpc.IContractModel
         [DataMember(Name = "Msg")]
         public virtual string Message { get; set; }
     }
-
+    
     /// <summary>
-    /// ResponseModelBase
+    /// ResponseModel
     /// </summary>
     /// <typeparam name="TData"></typeparam>
-    public class ResponseModel<TData> : ResponseModel, IResponseModel<TData, int>
+    /// <typeparam name="TCode"></typeparam>
+    public class ResponseModel<TData, TCode> : ResponseModel<TCode>, IResponseModel<TData, TCode>
     {
         /// <summary>
         /// 
@@ -67,5 +69,11 @@ namespace Raven.Rpc.IContractModel
         public virtual TData Data { get; set; }
     }
 
+    ///// <summary>
+    ///// ResponseModelBase
+    ///// </summary>
+    //public class ResponseModel<TData> : ResponseModel<TData, int>
+    //{
+    //}
 
 }
