@@ -46,13 +46,11 @@ namespace Raven.Rpc.IContractModel
         /// <summary>
         /// 
         /// </summary>
-        [DataMember(Name = "Ext")]
         public virtual KeyValue<string, string>[] Extension { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        [DataMember(Name = "Msg")]
         public virtual string Message { get; set; }
     }
     

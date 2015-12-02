@@ -35,6 +35,7 @@ namespace Raven.Rpc.HttpProtocol.WinAppTest
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show(ex.Message);
                     ;
                 }
             };
