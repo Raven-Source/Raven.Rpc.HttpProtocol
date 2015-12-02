@@ -678,7 +678,7 @@ namespace Raven.Rpc.HttpProtocol
         private void CreateUrlParams(IDictionary<string, string> urlParameters, ref string baseUrl)
         {
             StringBuilder buffer = new StringBuilder();
-            AddDefaultParameters(ref urlParameters);
+            AddDefaultUrlParameters(ref urlParameters);
 
             if (urlParameters != null)
             {
@@ -818,7 +818,7 @@ namespace Raven.Rpc.HttpProtocol
         /// 添加默认参数
         /// </summary>
         /// <param name="urlParameters"></param>
-        private void AddDefaultParameters(ref IDictionary<string, string> urlParameters)
+        private void AddDefaultUrlParameters(ref IDictionary<string, string> urlParameters)
         {
             //系统参数
             if (urlParameters == null)
@@ -826,17 +826,18 @@ namespace Raven.Rpc.HttpProtocol
                 urlParameters = new Dictionary<string, string>();
             }
 
-            IDictionary<string, string> dp = null;
-            dp = FurnishDefaultParameters();
+            //IDictionary<string, string> dp = null;
+            //dp = FurnishDefaultParameters();
+            DefaultUrlParametersHandler(urlParameters);
 
-            if (dp != null && dp.Count > 0)
-            {
-                foreach (var item in dp)
-                {
-                    if (urlParameters.ContainsKey(item.Key)) continue;
-                    urlParameters.Add(item);
-                }
-            }
+            //if (dp != null && dp.Count > 0)
+            //{
+            //    foreach (var item in dp)
+            //    {
+            //        if (urlParameters.ContainsKey(item.Key)) continue;
+            //        urlParameters.Add(item);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -858,10 +859,18 @@ namespace Raven.Rpc.HttpProtocol
         {
         }
 
+        ///// <summary>
+        ///// 提供默认参数
+        ///// </summary>
+        //protected abstract IDictionary<string, string> FurnishDefaultParameters();
+
         /// <summary>
         /// 提供默认参数
         /// </summary>
-        protected abstract IDictionary<string, string> FurnishDefaultParameters();
+        /// <param name="urlParameters"></param>
+        protected virtual void DefaultUrlParametersHandler(IDictionary<string, string>  urlParameters)
+        {
+        }
 
         #region IDispose
 

@@ -21,12 +21,7 @@ namespace Raven.Rpc.HttpProtocol.Test
         {
             base.DefaultRequestHeadersHandler(headers);
         }
-
-        protected override IDictionary<string, string> FurnishDefaultParameters()
-        {
-            return null;
-        }
-
+        
         protected override void ErrorResponseHandler<T>(ref T result, HttpResponseMessage httpResponse)
         {
             result = new ResponseModel() as T;
