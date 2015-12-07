@@ -1,0 +1,10 @@
+{
+  "name": "Raven.Rpc.HttpProtocol.Nodejs",
+  "version": "0.0.0",
+  "description": "Raven.Rpc.HttpProtocol.Nodejs",
+  "main": "app.js",
+  "author": {
+    "name": "liang",
+    "email": ""
+  }
+}

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.WinAppTest", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.WinAppTest\Raven.Rpc.HttpProtocol.WinAppTest.csproj", "{9889E3DA-6698-4B4E-968C-10CD7BF81458}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Raven.Rpc.HttpProtocol.Nodejs", "Raven.Rpc.HttpProtocol.Nodejs\Raven.Rpc.HttpProtocol.Nodejs.njsproj", "{388FBE83-B5AD-499F-95B9-5CA21457390A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
