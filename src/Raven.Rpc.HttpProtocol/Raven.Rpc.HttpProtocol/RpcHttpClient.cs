@@ -13,7 +13,7 @@ namespace Raven.Rpc.HttpProtocol
     /// 
     /// </summary>
     public abstract class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
-                                       //where RT : class, new()
+    //where RT : class, new()
     {
         private string _baseUrl;
         private int _timeout;
@@ -126,14 +126,15 @@ namespace Raven.Rpc.HttpProtocol
                 request.Method = httpMethod;
                 if (data != null)
                 {
-                    if (data is string)
-                    {
-                        content = new StringContent(data.ToString(), Encoding.UTF8);
-                    }
-                    else
-                    {
-                        content = new ObjectContent<TData>(data, _mediaTypeFormatter);
-                    }
+                    content = CreateContent(data);
+                    //if (data is string)
+                    //{
+                    //    content = new StringContent(data.ToString(), Encoding.UTF8);
+                    //}
+                    //else
+                    //{
+                    //    content = new ObjectContent<TData>(data, _mediaTypeFormatter);
+                    //}
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
@@ -175,14 +176,8 @@ namespace Raven.Rpc.HttpProtocol
                 request.Method = httpMethod;
                 if (data != null)
                 {
-                    if (data is string)
-                    {
-                        content = new StringContent(data.ToString(), Encoding.UTF8);
-                    }
-                    else
-                    {
-                        content = new ObjectContent<TData>(data, _mediaTypeFormatter);
-                    }
+                    content = CreateContent(data);
+
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
@@ -724,20 +719,23 @@ namespace Raven.Rpc.HttpProtocol
         private HttpContent CreateContent<TData>(TData data)
         {
             HttpContent httpContent = null;
-            var fullName = typeof(TData).FullName;
+            object contentData = data as object;
+            RequestContentDataHandler(ref contentData);
+            Type type = contentData.GetType();
+
+            var fullName = type.FullName;
             switch (fullName)
             {
                 case "System.String":
-                    httpContent = new StringContent(data.ToString(), defaultEncoding, _mediaType);
+                    httpContent = new StringContent(contentData.ToString(), defaultEncoding, _mediaType);
                     break;
                 case "System.Byte[]":
-                    httpContent = new ByteArrayContent(data as byte[]);
+                    httpContent = new ByteArrayContent(contentData as byte[]);
                     break;
                 default:
-                    httpContent = new ObjectContent<TData>(data, _mediaTypeFormatter);
+                    httpContent = new ObjectContent(type, contentData, _mediaTypeFormatter);
                     break;
             }
-
             return httpContent;
 
         }
@@ -828,7 +826,7 @@ namespace Raven.Rpc.HttpProtocol
 
             //IDictionary<string, string> dp = null;
             //dp = FurnishDefaultParameters();
-            DefaultUrlParametersHandler(urlParameters);
+            DefaultUrlParametersHandler(ref urlParameters);
 
             //if (dp != null && dp.Count > 0)
             //{
@@ -859,16 +857,19 @@ namespace Raven.Rpc.HttpProtocol
         {
         }
 
-        ///// <summary>
-        ///// 提供默认参数
-        ///// </summary>
-        //protected abstract IDictionary<string, string> FurnishDefaultParameters();
-
         /// <summary>
-        /// 提供默认参数
+        /// Url默认参数处理
         /// </summary>
         /// <param name="urlParameters"></param>
-        protected virtual void DefaultUrlParametersHandler(IDictionary<string, string>  urlParameters)
+        protected virtual void DefaultUrlParametersHandler(ref IDictionary<string, string> urlParameters)
+        {
+        }
+        
+        /// <summary>
+        /// 请求数据处理
+        /// </summary>
+        /// <param name="data"></param>
+        protected virtual void RequestContentDataHandler(ref object data)
         {
         }
 

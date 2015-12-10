@@ -27,5 +27,6 @@ namespace Raven.Rpc.HttpProtocol.Test
             result = new ResponseModel() as T;
             base.ErrorResponseHandler<T>(ref result, httpResponse);
         }
+
     }
 }
