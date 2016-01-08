@@ -26,36 +26,34 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 
         void Get()
         {
-            int speed = 10000;
+            int seed = 5000;
             var result2 = valuesApi_json.GetAsync<ResponseModel>("api/Values/Get/1").Result;
             var result3 = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1").Result;
             Stopwatch sw = new Stopwatch();
 
-            List<Task> taskList = new List<Task>();
+            Task[] taskList = new Task[seed];
 
-            Thread.Sleep(5000);
-            taskList.Clear();
             sw.Restart();
-            for (var i = 0; i < speed; i++)
+            for (var i = 0; i < seed; i++)
             {
                 var task = valuesApi_json.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
-                taskList.Add(task);
+                taskList[i] = task;
             }
-            Task.WaitAll(taskList.ToArray());
+            Task.WaitAll(taskList);
             sw.Stop();
             Console.WriteLine("valuesApi_json:GetAsync:" + sw.ElapsedMilliseconds.ToString());
 
-            Thread.Sleep(5000);
-            taskList.Clear();
-            sw.Restart();
-            for (var i = 0; i < speed; i++)
-            {
-                var task = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
-                taskList.Add(task);
-            }
-            Task.WaitAll(taskList.ToArray());
-            sw.Stop();
-            Console.WriteLine("valuesApi_bson:GetAsync:" + sw.ElapsedMilliseconds.ToString());
+            //Thread.Sleep(5000);
+            //taskList.Clear();
+            //sw.Restart();
+            //for (var i = 0; i < seed; i++)
+            //{
+            //    var task = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
+            //    taskList.Add(task);
+            //}
+            //Task.WaitAll(taskList.ToArray());
+            //sw.Stop();
+            //Console.WriteLine("valuesApi_bson:GetAsync:" + sw.ElapsedMilliseconds.ToString());
 
         }
     }

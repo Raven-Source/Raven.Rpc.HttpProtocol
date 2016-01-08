@@ -15,10 +15,9 @@ namespace Raven.WebAPI.Controllers
     {
         // GET api/values/5
         [HttpGet]
-        public string Get()
+        public ResponseModel<User> Get()
         {
-            //return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
-            return "gg";
+            return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
         // POST api/values
