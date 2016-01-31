@@ -13,7 +13,7 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://localhost:24750/", timeout: 15000, mediaType: mediaType)
+            : base("http://localhost:9001/", timeout: 15000, mediaType: mediaType)
         {
         }
         
@@ -27,5 +27,6 @@ namespace Raven.Rpc.HttpProtocol.Test
             result = new ResponseModel() as T;
             base.ErrorResponseHandler<T>(ref result, httpResponse);
         }
+
     }
 }

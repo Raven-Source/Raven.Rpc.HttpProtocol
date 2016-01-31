@@ -18,10 +18,10 @@ namespace Raven.Rpc.HttpProtocol.Test
             var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
             Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");
 
-            ResponseModel result = new ResponseModel();
-            result.Message = "111";
-            result = valuesApi.Post<ResponseModel, ResponseModel>("api/Values/get", result);
-            Assert.AreEqual(result.Message.Substring(0,3), "111");
+            //ResponseModel result = new ResponseModel();
+            //result.Message = "111";
+            //result = valuesApi.Post<ResponseModel, ResponseModel>("api/Values/get", result);
+            //Assert.AreEqual(result.Message.Substring(0,3), "111");
 
 
 
