@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C68A5C0A-508A-4271-BC22-36DB99D3F104}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.WinAppTest", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.WinAppTest\Raven.Rpc.HttpProtocol.WinAppTest.csproj", "{9889E3DA-6698-4B4E-968C-10CD7BF81458}"
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Raven.Rpc.HttpProtocol.Nodejs", "Raven.Rpc.HttpProtocol.Nodejs\Raven.Rpc.HttpProtocol.Nodejs.njsproj", "{388FBE83-B5AD-499F-95B9-5CA21457390A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPIWinS", "Raven.WebAPIWinS\Raven.WebAPIWinS.csproj", "{DE8C69D1-8612-4D62-A925-63C64DFA3161}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,5 +75,6 @@ Global
 		{0BA7212C-584D-4196-A51A-A62BABC333E2} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{546A14CC-577B-411B-BC6F-605063D9446E} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 	EndGlobalSection
 EndGlobal
