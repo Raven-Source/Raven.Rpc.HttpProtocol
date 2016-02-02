@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raven.Rpc.HttpProtocol.Formatters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -22,10 +23,11 @@ namespace Raven.Rpc.HttpProtocol
         private MediaTypeFormatter _mediaTypeFormatter;
         private MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
+            new JsonMediaTypeFormatter(),
+            new BsonMediaTypeFormatter(),
+            new MsgPackTypeFormatter(),
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
-            new BsonMediaTypeFormatter(),
-            new JsonMediaTypeFormatter(),
         };
 
         private MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
@@ -59,6 +61,9 @@ namespace Raven.Rpc.HttpProtocol
             MediaTypeFormatter mediaTypeFormatter = null;
             switch (mediaType)
             {
+                case MediaType.msgpack:
+                    mediaTypeFormatter = new MsgPackTypeFormatter();
+                    break;
                 case MediaType.form:
                     mediaTypeFormatter = new FormUrlEncodedMediaTypeFormatter();
                     break;

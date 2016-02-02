@@ -13,5 +13,6 @@ namespace Raven.Rpc.HttpProtocol
         public const string json = "application/json";
         public const string bson = "application/bson";
         public const string form = "application/x-www-form-urlencoded";
+        public const string msgpack = "application/msgpack";
     }
 }
