@@ -1,3 +1,0 @@
-[submodule "modules/Raven.Serializer"]
-	path = modules/Raven.Serializer
-	url = git@github.com:Indifer/Raven.Serializer.git
