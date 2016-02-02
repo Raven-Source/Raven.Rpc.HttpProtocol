@@ -32,9 +32,18 @@
     <DocumentationFile>bin\Release\Raven.Rpc.HttpProtocol.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MsgPack">
+      <HintPath>..\..\..\modules\Raven.Serializer\output\net45\Raven.Serializer.WithMsgPack\MsgPack.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Raven.Serializer">
+      <HintPath>..\..\..\modules\Raven.Serializer\output\net45\Raven.Serializer\Raven.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Serializer.WithMsgPack">
+      <HintPath>..\..\..\modules\Raven.Serializer\output\net45\Raven.Serializer.WithMsgPack\Raven.Serializer.WithMsgPack.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Formatters\MsgPackTypeFormatter.cs" />
     <Compile Include="IRpcHttpClient.cs" />
     <Compile Include="IRpcHttpClientAsync.cs" />
     <Compile Include="MediaType.cs" />
