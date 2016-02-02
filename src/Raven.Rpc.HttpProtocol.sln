@@ -21,11 +21,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.WinA
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Raven.Rpc.HttpProtocol.Nodejs", "Raven.Rpc.HttpProtocol.Nodejs\Raven.Rpc.HttpProtocol.Nodejs.njsproj", "{388FBE83-B5AD-499F-95B9-5CA21457390A}"
 EndProject
+<<<<<<< HEAD
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPIWinS", "Raven.WebAPIWinS\Raven.WebAPIWinS.csproj", "{DE8C69D1-8612-4D62-A925-63C64DFA3161}"
+=======
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol40", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol40\Raven.Rpc.HttpProtocol40.csproj", "{F4969C2A-06F6-4B70-97D1-4F6362089FCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol40.Test", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol40.Test\Raven.Rpc.HttpProtocol40.Test.csproj", "{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.IContractModel40", "Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel40.csproj", "{985CD366-A4F6-42FE-A0D3-C83937EE7B9F}"
+>>>>>>> d77b8738b9a8a961f4207095e6221e40441b1c1d
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,10 @@ Global
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +95,7 @@ Global
 		{0BA7212C-584D-4196-A51A-A62BABC333E2} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{546A14CC-577B-411B-BC6F-605063D9446E} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{DE8C69D1-8612-4D62-A925-63C64DFA3161} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 	EndGlobalSection
 EndGlobal
