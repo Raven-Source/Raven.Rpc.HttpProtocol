@@ -12,6 +12,7 @@ namespace Raven.Rpc.IContractModel
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
+    [DataContract]
     public class KeyValue<TKey, TValue>
     {
         /// <summary>
@@ -25,6 +26,15 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         [DataMember(Name = "V")]
         public TValue Value { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public KeyValue()
+        {
+            Key = default(TKey);
+            Value = default(TValue);
+        }
 
         /// <summary>
         /// 

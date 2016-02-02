@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Raven.Rpc.IContractModel</id>
+        <version>1.0.4</version>
+        <authors>LiangYi</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>RPC DTO</description>
+    </metadata>
+    <files>
+        <file src="..\output\net40\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.dll" target="lib\net40\Raven.Rpc.IContractModel.dll" />
+        <file src="..\output\net40\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.pdb" target="lib\net40\Raven.Rpc.IContractModel.pdb" />
+        <file src="..\output\net40\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.xml" target="lib\net40\Raven.Rpc.IContractModel.xml" />
+        <file src="..\output\net45\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.dll" target="lib\net45\Raven.Rpc.IContractModel.dll" />
+        <file src="..\output\net45\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.pdb" target="lib\net45\Raven.Rpc.IContractModel.pdb" />
+        <file src="..\output\net45\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.xml" target="lib\net45\Raven.Rpc.IContractModel.xml" />
+    </files>
+</package>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Raven.Rpc.HttpProtocol</id>
+        <version>1.0.5</version>
+        <authors>LiangYi</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Raven.Rpc.HttpProtocol</description>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="7.0.1" />
+            <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\output\net45\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.dll" target="lib\net45\Raven.Rpc.HttpProtocol.dll" />
+        <file src="..\output\net45\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.pdb" target="lib\net45\Raven.Rpc.HttpProtocol.pdb" />
+        <file src="..\output\net45\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.xml" target="lib\net45\Raven.Rpc.HttpProtocol.xml" />
+    </files>
+</package>

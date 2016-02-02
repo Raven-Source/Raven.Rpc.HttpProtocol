@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Raven.AspNet.WebApiExtensions</name>
+    </assembly>
+    <members>
+        <member name="T:Raven.AspNet.WebApiExtensions.Attributes.CompressionAttribute">
+            <summary>
+            Deflate 压缩
+            </summary>
+        </member>
+        <member name="F:Raven.AspNet.WebApiExtensions.Attributes.CompressionAttribute.dict">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Attributes.CompressionAttribute.OnActionExecuted(System.Web.Http.Filters.HttpActionExecutedContext)">
+            <summary>
+            
+            </summary>
+            <param name="actContext"></param>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Attributes.CompressionAttribute.GetCompressionType(System.Net.Http.HttpRequestMessage,System.String@)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter">
+            <summary>
+            MediaType:"application/json"
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter.CanReadType(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter.CanWriteType(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter.ReadFromStreamAsync(System.Type,System.IO.Stream,System.Net.Http.HttpContent,System.Net.Http.Formatting.IFormatterLogger)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="readStream"></param>
+            <param name="content"></param>
+            <param name="formatterLogger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.JilJsonFormatter.WriteToStreamAsync(System.Type,System.Object,System.IO.Stream,System.Net.Http.HttpContent,System.Net.TransportContext)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="value"></param>
+            <param name="writeStream"></param>
+            <param name="content"></param>
+            <param name="transportContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter">
+            <summary>
+            MediaType:"application/msgpack"
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter.CanReadType(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter.CanWriteType(System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter.ReadFromStreamAsync(System.Type,System.IO.Stream,System.Net.Http.HttpContent,System.Net.Http.Formatting.IFormatterLogger)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="readStream"></param>
+            <param name="content"></param>
+            <param name="formatterLogger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter.WriteToStreamAsync(System.Type,System.Object,System.IO.Stream,System.Net.Http.HttpContent,System.Net.TransportContext)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="value"></param>
+            <param name="writeStream"></param>
+            <param name="content"></param>
+            <param name="transportContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Route.HttpRouteCollectionExtended">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Route.HttpRouteCollectionExtended.MapHttpRoute(System.Web.Http.HttpRouteCollection,System.String,System.String,System.Object,System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="routes"></param>
+            <param name="name"></param>
+            <param name="routeTemplate"></param>
+            <param name="defaults"></param>
+            <param name="namespaces"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Route.HttpRouteCollectionExtended.MapHttpRoute(System.Web.Http.HttpRouteCollection,System.String,System.String,System.Object,System.Object,System.Net.Http.HttpMessageHandler,System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="routes"></param>
+            <param name="name"></param>
+            <param name="routeTemplate"></param>
+            <param name="defaults"></param>
+            <param name="constraints"></param>
+            <param name="handler"></param>
+            <param name="namespaces"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Route.NamespaceHttpControllerSelector">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.AspNet.WebApiExtensions.Route.NamespaceHttpControllerSelector.#ctor(System.Web.Http.HttpConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Util.CompressionType">
+            <summary>
+            Compression Type
+            deflate,gzip,zlib
+            </summary>
+        </member>
+    </members>
+</doc>

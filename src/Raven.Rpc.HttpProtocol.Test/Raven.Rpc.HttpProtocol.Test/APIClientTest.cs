@@ -13,7 +13,7 @@ namespace Raven.Rpc.HttpProtocol.Test
         [TestMethod]
         public void Get()
         {
-            ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.json);
+            ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.msgpack);
 
             var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
             Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");

@@ -12,6 +12,9 @@ namespace Raven.WebAPI.Models
 
     public class ResponseModel<T> : Raven.Rpc.IContractModel.ResponseModel<T, int>
     {
+        public ResponseModel() : base()
+        {
+        }
     }
 
 

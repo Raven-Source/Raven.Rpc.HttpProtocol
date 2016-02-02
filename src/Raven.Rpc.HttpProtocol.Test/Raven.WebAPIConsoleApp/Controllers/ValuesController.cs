@@ -20,6 +20,12 @@ namespace Raven.WebAPI.Controllers
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
+        [HttpGet]
+        public User Get2()
+        {
+            return new User { Name = "ResponseModel-Get" };
+        }
+
         // POST api/values
         public ResponseModel Post([FromBody]ResponseModel value)
         {
@@ -36,13 +42,13 @@ namespace Raven.WebAPI.Controllers
         public void Delete(int id)
         {
         }
-        
+
         [HttpGet]
         public void Test()
         {
             int a = Convert.ToInt32("g");
         }
-        
+
 
     }
 
