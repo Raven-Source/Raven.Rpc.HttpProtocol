@@ -49,6 +49,11 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         public string TrackID { get; set; }
 
+        /// <summary>
+        /// UUID
+        /// </summary>
+        public string UUID { get; set; }
+
     }
 
 }

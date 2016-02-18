@@ -72,6 +72,12 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
+      <Project>{ab1873c0-6ead-4089-a3b6-7cb8d68d92f5}</Project>
+      <Name>Raven.Rpc.IContractModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

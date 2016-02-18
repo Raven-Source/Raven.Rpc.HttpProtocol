@@ -9,6 +9,8 @@ using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
 using Raven.WebAPI.Models;
 using System.Web;
+using System.Net.Http;
+using Owin;
 
 namespace Raven.WebAPI.Controllers
 {
@@ -16,14 +18,17 @@ namespace Raven.WebAPI.Controllers
     {
         // GET api/values/5
         [HttpGet]
+        [BytesData]
         public ResponseModel<User> Get()
         {
+            var res = OwinRequestScopeContext.Current;
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
         [HttpGet]
         public User Get2()
         {
+            throw new Exception("aa");
             return new User { Name = "ResponseModel-Get" };
         }
 
@@ -57,8 +62,7 @@ namespace Raven.WebAPI.Controllers
     {
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-
-
+            //actionContext.Request.RequestUri.DnsSafeHost
             base.OnActionExecuting(actionContext);
         }
     }

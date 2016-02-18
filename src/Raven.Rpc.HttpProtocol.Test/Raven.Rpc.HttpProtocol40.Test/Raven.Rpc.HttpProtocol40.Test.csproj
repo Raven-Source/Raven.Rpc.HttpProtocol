@@ -85,9 +85,9 @@
       <Project>{f4969c2a-06f6-4b70-97d1-4f6362089fce}</Project>
       <Name>Raven.Rpc.HttpProtocol40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel40.csproj">
-      <Project>{985cd366-a4f6-42fe-a0d3-c83937ee7b9f}</Project>
-      <Name>Raven.Rpc.IContractModel40</Name>
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
+      <Project>{ab1873c0-6ead-4089-a3b6-7cb8d68d92f5}</Project>
+      <Name>Raven.Rpc.IContractModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

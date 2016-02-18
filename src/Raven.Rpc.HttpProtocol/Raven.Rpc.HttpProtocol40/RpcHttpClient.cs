@@ -12,7 +12,7 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public abstract class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+    public class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
     //where RT : class, new()
     {
         private string _baseUrl;

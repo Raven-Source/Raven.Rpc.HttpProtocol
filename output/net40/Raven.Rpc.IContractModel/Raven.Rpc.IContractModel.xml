@@ -45,6 +45,11 @@
             
             </summary>
         </member>
+        <member name="P:Raven.Rpc.IContractModel.Header.UUID">
+            <summary>
+            UUID
+            </summary>
+        </member>
         <member name="T:Raven.Rpc.IContractModel.IResponseModel`1">
             <summary>
             IResponseModel

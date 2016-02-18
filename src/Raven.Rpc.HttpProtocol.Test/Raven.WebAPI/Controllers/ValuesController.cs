@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
@@ -24,6 +25,7 @@ namespace Raven.WebAPIConsoleApp.Controllers
         [HttpGet]
         public string Get()
         {
+            //System.Web.HttpContext.Current.GetOwinContext();
             //return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
             return "gg";
         }
