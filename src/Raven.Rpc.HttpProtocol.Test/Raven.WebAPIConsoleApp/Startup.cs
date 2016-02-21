@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -33,7 +34,10 @@ namespace Raven.WebAPIConsoleApp
             config.Formatters.Add(bson);
             config.Formatters.Add(new Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter());
 
+            appBuilder.UseRequestScopeContext();
             appBuilder.UseWebApi(config);
+            //CallContext
+            //appBuilder.Use(
         }
     }
 }

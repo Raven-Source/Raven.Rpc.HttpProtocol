@@ -13,10 +13,20 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://localhost:9001/", timeout: 15000, mediaType: mediaType)
+            : base("http://192.168.2.12:9001/", timeout: 15000, mediaType: mediaType)
         {
         }
-        
+
+        protected override void DefaultUrlParametersHandler(ref IDictionary<string, string> urlParameters)
+        {
+            base.DefaultUrlParametersHandler(ref urlParameters);
+        }
+
+        protected override void RequestContentDataHandler(ref object data)
+        {
+            base.RequestContentDataHandler(ref data);
+        }
+
         protected override void DefaultRequestHeadersHandler(System.Net.Http.Headers.HttpRequestHeaders headers)
         {
             base.DefaultRequestHeadersHandler(headers);
