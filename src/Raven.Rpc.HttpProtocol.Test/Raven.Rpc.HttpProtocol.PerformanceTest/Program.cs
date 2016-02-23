@@ -26,9 +26,12 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 
         void Get()
         {
-            int seed = 1;
-            var result2 = valuesApi_json.GetAsync<ResponseModel>("api/Values/Get/1").Result;
+            int seed = 5000;
+            var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1").Result;
             var result3 = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1").Result;
+
+            valuesApi_bson.Send<ResponseModel, object>("api/Values/Get/1");
+
             Stopwatch sw = new Stopwatch();
 
             Task[] taskList = new Task[seed];

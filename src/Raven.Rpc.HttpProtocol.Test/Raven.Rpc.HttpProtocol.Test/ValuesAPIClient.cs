@@ -13,30 +13,40 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://127.0.0.1:9001/", timeout: 15000, mediaType: mediaType)
+            : base("http://192.168.2.12:9001/", timeout: 15000, mediaType: mediaType)
         {
+            this.OnRequest += ValuesAPIClient_OnRequest;
+            this.OnResponse += ValuesAPIClient_OnResponse;
+            this.OnError += ValuesAPIClient_OnError;
+            this.RequestContentDataHandler += ValuesAPIClient_RequestContentDataHandler;
+            this.ErrorResponseHandler += ValuesAPIClient_ErrorResponseHandler;
         }
 
-        protected override void DefaultUrlParametersHandler(ref IDictionary<string, string> urlParameters)
+        private object ValuesAPIClient_ErrorResponseHandler(Exception arg)
         {
-            base.DefaultUrlParametersHandler(ref urlParameters);
+            return null;
         }
 
-        protected override void RequestContentDataHandler(ref object data)
+        private object ValuesAPIClient_RequestContentDataHandler(object data)
         {
-            base.RequestContentDataHandler(ref data);
+            return data;
         }
 
-        protected override void DefaultRequestHeadersHandler(System.Net.Http.Headers.HttpRequestHeaders headers)
+        private bool ValuesAPIClient_OnError(Exception arg)
         {
-            base.DefaultRequestHeadersHandler(headers);
+            return true;
+        }
+
+        private void ValuesAPIClient_OnRequest(HttpRequestMessage obj)
+        {
+            obj.Headers.Add("gg", "xx");
+        }
+
+        private void ValuesAPIClient_OnResponse(HttpResponseMessage arg1, object arg2)
+        {
+            ;
         }
         
-        protected override void ErrorResponseHandler<T>(ref T result, HttpResponseMessage httpResponse)
-        {
-            result = new ResponseModel() as T;
-            base.ErrorResponseHandler<T>(ref result, httpResponse);
-        }
 
     }
 }

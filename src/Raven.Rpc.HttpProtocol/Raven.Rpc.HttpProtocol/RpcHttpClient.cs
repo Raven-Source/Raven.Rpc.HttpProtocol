@@ -13,7 +13,7 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public abstract class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+    public class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
     //where RT : class, new()
     {
         private string _baseUrl;
@@ -21,7 +21,10 @@ namespace Raven.Rpc.HttpProtocol
         private HttpClient _httpClient;
         private string _mediaType;
         private MediaTypeFormatter _mediaTypeFormatter;
-        private MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
+        private MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
+
+        private static Encoding defaultEncoding = Encoding.UTF8;
+        private static MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
             new JsonMediaTypeFormatter(),
             new BsonMediaTypeFormatter(),
@@ -29,10 +32,6 @@ namespace Raven.Rpc.HttpProtocol
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
         };
-
-        private MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
-
-        private static Encoding defaultEncoding = Encoding.UTF8;
 
         /// <summary>
         /// 构造函数
@@ -49,6 +48,14 @@ namespace Raven.Rpc.HttpProtocol
             _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue(mediaType);
             _httpClient = new HttpClient();
             InitHttpClient(timeout, _httpClient);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public HttpRequestHeaders DefaultRequestHeaders
+        {
+            get { return _httpClient.DefaultRequestHeaders; }
         }
 
         /// <summary>
@@ -104,23 +111,19 @@ namespace Raven.Rpc.HttpProtocol
             }
             client.DefaultRequestHeaders.Accept.Add(_mediaTypeWithQualityHeaderValue);
             client.DefaultRequestHeaders.Connection.Add("keep-alive");
-            DefaultRequestHeadersHandler(client.DefaultRequestHeaders);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TData"></typeparam>
         /// <param name="url"></param>
-        /// <param name="data"></param>
-        /// <param name="httpMethod"></param>
+        /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> SendAsync<TResult, TData>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual async Task<TResult> SendAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
-            where TData : class
         {
             var client = _httpClient;
             string requestUrl = _baseUrl + url;
@@ -128,31 +131,49 @@ namespace Raven.Rpc.HttpProtocol
             HttpContent content = null;
             using (HttpRequestMessage request = new HttpRequestMessage())
             {
-                request.Method = httpMethod;
-                if (data != null)
-                {
-                    content = CreateContent(data);
-                    //if (data is string)
-                    //{
-                    //    content = new StringContent(data.ToString(), Encoding.UTF8);
-                    //}
-                    //else
-                    //{
-                    //    content = new ObjectContent<TData>(data, _mediaTypeFormatter);
-                    //}
-                    request.Content = content;
-                    request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
-                }
+                request.Method = httpMethod ?? HttpMethod.Post;
                 request.RequestUri = new Uri(requestUrl);
-                using (HttpResponseMessage response = await client.SendAsync(request))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
 
+                // OnSend
+                if (OnRequest != null)
+                {
+                    OnRequest(request);
+                }
+
+                try
+                {
+                    using (HttpResponseMessage response = await client.SendAsync(request))
+                    {
+                        TResult result = await GetResultAsync<TResult>(response);
+
+                        if (OnResponse != null)
+                        {
+                            OnResponse(response, result as object);
+                        }
+
+                        return result as TResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (OnError != null && OnError(ex))
+                    {
+                        if (ErrorResponseHandler != null)
+                        {
+                            return ErrorResponseHandler(ex) as TResult;
+                        }
+                        else
+                            return default(TResult);
+                    }
+                    else
+                        throw ex;
+                }
+                finally
+                {
                     if (content != null)
                     {
                         content.Dispose();
                     }
-                    return result as TResult;
                 }
             }
         }
@@ -160,17 +181,16 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
         /// <typeparam name="TData"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="url"></param>
         /// <param name="data"></param>
-        /// <param name="httpMethod"></param>
+        /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Send<TResult, TData>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual async Task<TResult> SendAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
-            where TData : class
         {
             var client = _httpClient;
             string requestUrl = _baseUrl + url;
@@ -178,7 +198,137 @@ namespace Raven.Rpc.HttpProtocol
             HttpContent content = null;
             using (HttpRequestMessage request = new HttpRequestMessage())
             {
-                request.Method = httpMethod;
+                request.Method = httpMethod ?? HttpMethod.Post;
+                if (data != null)
+                {
+                    content = CreateContent(data);
+                    request.Content = content;
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
+                }
+                request.RequestUri = new Uri(requestUrl);
+
+                // OnSend
+                if (OnRequest != null)
+                {
+                    OnRequest(request);
+                }
+                try
+                {
+                    using (HttpResponseMessage response = await client.SendAsync(request))
+                    {
+                        TResult result = await GetResultAsync<TResult>(response);
+
+                        if (OnResponse != null)
+                        {
+                            OnResponse(response, result as object);
+                        }
+
+                        return result as TResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (OnError != null && OnError(ex))
+                    {
+                        if (ErrorResponseHandler != null)
+                        {
+                            return ErrorResponseHandler(ex) as TResult;
+                        }
+                        else
+                            return default(TResult);
+                    }
+                    else
+                        throw ex;
+                }
+                finally
+                {
+                    if (content != null)
+                    {
+                        content.Dispose();
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="httpMethod">默认Post</param>
+        /// <param name="urlParameters"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public virtual TResult Send<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+            where TResult : class
+        {
+            var client = _httpClient;
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+            using (HttpRequestMessage request = new HttpRequestMessage())
+            {
+                request.Method = httpMethod ?? HttpMethod.Post;
+                request.RequestUri = new Uri(requestUrl);
+
+                // OnSend
+                if (OnRequest != null)
+                {
+                    OnRequest(request);
+                }
+
+                try
+                {
+                    using (HttpResponseMessage response = client.SendAsync(request).Result)
+                    {
+                        TResult result = GetResultAsync<TResult>(response).Result;
+
+                        if (OnResponse != null)
+                        {
+                            OnResponse(response, result as object);
+                        }
+
+                        return result as TResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (OnError != null && OnError(ex))
+                    {
+                        if (ErrorResponseHandler != null)
+                        {
+                            return ErrorResponseHandler(ex) as TResult;
+                        }
+                        else
+                            return default(TResult);
+                    }
+                    else
+                        throw ex;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="data"></param>
+        /// <param name="httpMethod">默认Post</param>
+        /// <param name="urlParameters"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public virtual TResult Send<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+            where TResult : class
+        {
+            var client = _httpClient;
+            string requestUrl = _baseUrl + url;
+            CreateUrlParams(urlParameters, ref requestUrl);
+            HttpContent content = null;
+            using (HttpRequestMessage request = new HttpRequestMessage())
+            {
+                request.Method = httpMethod ?? HttpMethod.Post;
                 if (data != null)
                 {
                     content = CreateContent(data);
@@ -187,15 +337,47 @@ namespace Raven.Rpc.HttpProtocol
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
                 request.RequestUri = new Uri(requestUrl);
-                using (HttpResponseMessage response = client.SendAsync(request).Result)
-                {
-                    TResult result = GetResultAsync<TResult>(response).Result;
 
+                // OnSend
+                if (OnRequest != null)
+                {
+                    OnRequest(request);
+                }
+
+                try
+                {
+                    using (HttpResponseMessage response = client.SendAsync(request).Result)
+                    {
+                        TResult result = GetResultAsync<TResult>(response).Result;
+
+                        if (OnResponse != null)
+                        {
+                            OnResponse(response, result as object);
+                        }
+
+                        return result as TResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (OnError != null && OnError(ex))
+                    {
+                        if (ErrorResponseHandler != null)
+                        {
+                            return ErrorResponseHandler(ex) as TResult;
+                        }
+                        else
+                            return default(TResult);
+                    }
+                    else
+                        throw ex;
+                }
+                finally
+                {
                     if (content != null)
                     {
                         content.Dispose();
                     }
-                    return result as TResult;
                 }
             }
         }
@@ -214,17 +396,20 @@ namespace Raven.Rpc.HttpProtocol
             //using (var client = new HttpClient())
             //{
             //InitHttpClient(timeout, client);
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpResponseMessage response = client.GetAsync(requestUrl).Result)
-            {
-                TResult result = GetResult<TResult>(response);
-                return result as TResult;
-            }
+            //using (HttpResponseMessage response = client.GetAsync(requestUrl).Result)
+            //{
+            //    TResult result = GetResult<TResult>(response);
+            //    return result as TResult;
             //}
+
+            //}
+
+            return Send<TResult>(url, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
@@ -235,23 +420,25 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> GetAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> GetAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //var client = _httpClient;
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpResponseMessage response = await client.GetAsync(requestUrl))
-            {
-                TResult result = await GetResultAsync<TResult>(response);
-                return result as TResult;
-            }
+            //using (HttpResponseMessage response = await client.GetAsync(requestUrl))
+            //{
+            //    TResult result = await GetResultAsync<TResult>(response);
+            //    return result as TResult;
             //}
+            //}
+
+            return SendAsync<TResult>(url, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
@@ -271,20 +458,22 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = CreateContent(data))
-            {
-                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                {
-                    TResult result = GetResult<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = CreateContent(data))
+            //{
+            //    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
+            //    {
+            //        TResult result = GetResult<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return Send<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -297,27 +486,29 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual async Task<TResult> PostAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = CreateContent(data))
-            {
-                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = CreateContent(data))
+            //{
+            //    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
+            //    {
+            //        TResult result = await GetResultAsync<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return SendAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -368,21 +559,23 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = new ByteArrayContent(data, offset, count))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
-                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                {
-                    TResult result = GetResult<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = new ByteArrayContent(data, offset, count))
+            //{
+            //    content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
+            //    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
+            //    {
+            //        TResult result = GetResult<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return Send<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -396,28 +589,30 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual async Task<TResult> PostAsync<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = new ByteArrayContent(data, offset, count))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
-                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = new ByteArrayContent(data, offset, count))
+            //{
+            //    content.Headers.ContentType = new MediaTypeHeaderValue(MediaType.bytes);
+            //    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
+            //    {
+            //        TResult result = await GetResultAsync<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return SendAsync<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -436,20 +631,22 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
-            {
-                using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
-                {
-                    TResult result = GetResult<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+            //{
+            //    using (HttpResponseMessage response = client.PostAsync(requestUrl, content).Result)
+            //    {
+            //        TResult result = GetResult<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return Send<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -461,27 +658,29 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
-            {
-                using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+            //{
+            //    using (HttpResponseMessage response = await client.PostAsync(requestUrl, content))
+            //    {
+            //        TResult result = await GetResultAsync<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return SendAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -501,20 +700,22 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = CreateContent(data))
-            {
-                using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
-                {
-                    TResult result = GetResult<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = CreateContent(data))
+            //{
+            //    using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
+            //    {
+            //        TResult result = GetResult<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return Send<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -527,27 +728,29 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> PutAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PutAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = CreateContent(data))
-            {
-                using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = CreateContent(data))
+            //{
+            //    using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
+            //    {
+            //        TResult result = await GetResultAsync<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return SendAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -566,20 +769,22 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = CreateContent(data))
-            {
-                using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
-                {
-                    TResult result = GetResult<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = CreateContent(data))
+            //{
+            //    using (HttpResponseMessage response = client.PutAsync(requestUrl, content).Result)
+            //    {
+            //        TResult result = GetResult<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return Send<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -591,27 +796,29 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
-            {
-                using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
-                {
-                    TResult result = await GetResultAsync<TResult>(response);
-                    return result as TResult;
-                }
-            }
+            //using (HttpContent content = new ObjectContent<IDictionary<string, string>>(data, _mediaTypeFormatter))
+            //{
+            //    using (HttpResponseMessage response = await client.PutAsync(requestUrl, content))
+            //    {
+            //        TResult result = await GetResultAsync<TResult>(response);
+            //        return result as TResult;
+            //    }
             //}
+            //}
+
+            return SendAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -629,17 +836,19 @@ namespace Raven.Rpc.HttpProtocol
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpResponseMessage response = client.DeleteAsync(requestUrl).Result)
-            {
-                TResult result = GetResult<TResult>(response);
-                return result as TResult;
-            }
+            //using (HttpResponseMessage response = client.DeleteAsync(requestUrl).Result)
+            //{
+            //    TResult result = GetResult<TResult>(response);
+            //    return result as TResult;
             //}
+            //}
+
+            return Send<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
         }
 
         /// <summary>
@@ -650,24 +859,26 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> DeleteAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> DeleteAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
             //using (var client = new HttpClient())
             //{
             //    InitHttpClient(timeout, client);
 
-            var client = _httpClient;
+            //var client = _httpClient;
 
-            string requestUrl = _baseUrl + url;
-            CreateUrlParams(urlParameters, ref requestUrl);
+            //string requestUrl = _baseUrl + url;
+            //CreateUrlParams(urlParameters, ref requestUrl);
 
-            using (HttpResponseMessage response = await client.DeleteAsync(requestUrl))
-            {
-                TResult result = await GetResultAsync<TResult>(response);
-                return result as TResult;
-            }
+            //using (HttpResponseMessage response = await client.DeleteAsync(requestUrl))
+            //{
+            //    TResult result = await GetResultAsync<TResult>(response);
+            //    return result as TResult;
             //}
+            //}
+
+            return SendAsync<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
         }
 
         /// <summary>
@@ -725,7 +936,12 @@ namespace Raven.Rpc.HttpProtocol
         {
             HttpContent httpContent = null;
             object contentData = data as object;
-            RequestContentDataHandler(ref contentData);
+
+            if (RequestContentDataHandler != null)
+            {
+                contentData = RequestContentDataHandler(contentData);
+            }
+            //RequestContentDataHandler(ref contentData);
             Type type = contentData.GetType();
 
             var fullName = type.FullName;
@@ -774,9 +990,11 @@ namespace Raven.Rpc.HttpProtocol
             }
             else
             {
-                result = default(TResult);
-                ErrorResponseHandler<TResult>(ref result, response);
-                return result;
+                throw new Exception(CreateErrorResponseMessage(response));
+
+                //result = default(TResult);
+                //result = ErrorResponseHandler(result, response);
+                //return result;
             }
         }
 
@@ -811,10 +1029,18 @@ namespace Raven.Rpc.HttpProtocol
             }
             else
             {
-                result = default(TResult);
-                ErrorResponseHandler<TResult>(ref result, response);
-                return result;
+                throw new Exception(CreateErrorResponseMessage(response));
+                
+                //result = default(TResult);
+                //result = ErrorResponseHandler(result, response);
+                //ErrorResponseHandler<TResult>(ref result, response);
+                //return result;
             }
+        }
+
+        private string CreateErrorResponseMessage(HttpResponseMessage response)
+        {
+            return string.Format("ReasonPhrase:{0},StatusCode:{1}", response.ReasonPhrase, (int)response.StatusCode);
         }
 
         /// <summary>
@@ -831,7 +1057,12 @@ namespace Raven.Rpc.HttpProtocol
 
             //IDictionary<string, string> dp = null;
             //dp = FurnishDefaultParameters();
-            DefaultUrlParametersHandler(ref urlParameters);
+            if (DefaultUrlParametersHandler != null)
+            {
+                urlParameters = DefaultUrlParametersHandler(urlParameters);
+            }
+
+            //DefaultUrlParametersHandler(ref urlParameters);
 
             //if (dp != null && dp.Count > 0)
             //{
@@ -843,40 +1074,112 @@ namespace Raven.Rpc.HttpProtocol
             //}
         }
 
-        /// <summary>
-        /// 请求前，请求header定义
-        /// </summary>
-        /// <param name="headers"></param>
-        protected virtual void DefaultRequestHeadersHandler(HttpRequestHeaders headers)
-        {
-        }
+        ///// <summary>
+        ///// 请求前，请求header定义
+        ///// </summary>
+        ///// <param name="headers"></param>
+        //protected virtual void DefaultRequestHeadersHandler(HttpRequestHeaders headers)
+        //{
+        //}
+
+        ///// <summary>
+        ///// Send数据前
+        ///// </summary>
+        ///// <param name="request"></param>
+        //protected virtual void OnSend(HttpRequestMessage request)
+        //{
+        //}
 
         /// <summary>
-        /// 异常处理
+        /// 请求前,
+        /// arg1 HttpRequestMessage
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="result"></param>
-        /// <param name="httpResponse"></param>
-        protected virtual void ErrorResponseHandler<TResult>(ref TResult result, HttpResponseMessage httpResponse)
-            where TResult : class
-        {
-        }
+        public event Action<HttpRequestMessage> OnRequest;
 
+        /// <summary>
+        /// 响应后,
+        /// arg1 HttpResponseMessage,
+        /// arg2 响应数据对象
+        /// </summary>
+        public event Action<HttpResponseMessage, object> OnResponse;
+
+        /// <summary>
+        /// OnError,
+        /// arg1 Exception,
+        /// res 后续是否抛出异常
+        /// </summary>
+        public event Func<Exception, bool> OnError;
+
+        /// <summary>
+        /// 异常情况返回数据处理,
+        /// arg1 Exception,
+        /// res TResult
+        /// </summary>
+        public event Func<Exception, object> ErrorResponseHandler;
+
+        ///// <summary>
+        ///// 异常处理
+        ///// </summary>
+        ///// <typeparam name="TResult"></typeparam>
+        ///// <param name="result"></param>
+        ///// <param name="httpResponse"></param>
+        //protected virtual TResult ErrorResponseHandler<TResult>(TResult result, HttpResponseMessage httpResponse)
+        //    where TResult : class
+        //{
+        //    return result;
+        //}
+
+        ///// <summary>
+        ///// 异常处理 事件
+        ///// </summary>
+        //public event ErrorResponseDelegate ErrorResponseHandler;
+        ///// <summary>
+        ///// 异常处理
+        ///// </summary>
+        ///// <param name="result"></param>
+        ///// <param name="httpResponse"></param>
+        ///// <returns></returns>
+        //public delegate object ErrorResponseDelegate(object result, HttpResponseMessage httpResponse);
+
+        ///// <summary>
+        ///// Url默认参数处理
+        ///// </summary>
+        ///// <param name="urlParameters"></param>
+        //protected virtual IDictionary<string, string> DefaultUrlParametersHandler(IDictionary<string, string> urlParameters)
+        //{
+        //    return urlParameters;
+        //}
+
+        /// <summary>
+        /// Url默认参数处理 事件
+        /// </summary>
+        public event DefaultUrlParametersDelegate DefaultUrlParametersHandler;
         /// <summary>
         /// Url默认参数处理
         /// </summary>
         /// <param name="urlParameters"></param>
-        protected virtual void DefaultUrlParametersHandler(ref IDictionary<string, string> urlParameters)
-        {
-        }
-        
+        /// <returns></returns>
+        public delegate IDictionary<string, string> DefaultUrlParametersDelegate(IDictionary<string, string> urlParameters);
+
+        ///// <summary>
+        ///// 请求数据处理
+        ///// </summary>
+        ///// <param name="data"></param>
+        //protected virtual object RequestContentDataHandler(object data)
+        //{
+        //    return data;
+        //}
+
+        /// <summary>
+        /// 请求数据处理 事件
+        /// </summary>
+        public event RequestContentDataDelegate RequestContentDataHandler;
         /// <summary>
         /// 请求数据处理
         /// </summary>
         /// <param name="data"></param>
-        protected virtual void RequestContentDataHandler(ref object data)
-        {
-        }
+        /// <returns></returns>
+        public delegate object RequestContentDataDelegate(object data);
 
         #region IDispose
 

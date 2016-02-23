@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using Raven.WebAPI.Models;
 using Raven.Rpc.HttpProtocol;
+using System.Threading.Tasks;
 
 namespace Raven.Rpc.HttpProtocol.Test
 {
@@ -11,12 +12,19 @@ namespace Raven.Rpc.HttpProtocol.Test
     public class APIClientTest
     {
         [TestMethod]
-        public void Get()
+        public async Task Get()
         {
             ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.json);
 
             var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
+
             Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");
+
+            var result3 = valuesApi.Get<ResponseModel<User>>("api/Values/get2");
+
+            var result4 = valuesApi.Get<ResponseModel<User>>("api/Values/get3");
+
+            var result5 = await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get3");
 
             //ResponseModel result = new ResponseModel();
             //result.Message = "111";

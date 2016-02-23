@@ -10,7 +10,7 @@ namespace Raven.WebAPIConsoleApp
     {
         static void Main(string[] args)
         {
-            using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://127.0.0.1:9001/"))
+            using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://192.168.2.12:9001/"))
             {
                 Console.WriteLine("Press [enter] to quit...");
                 Console.ReadLine();
