@@ -12,7 +12,14 @@ namespace Raven.WebAPI.Controllers
         {
             ViewBag.Title = "Home Page";
 
+            
+
             return View();
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            base.OnException(filterContext);
         }
     }
 }

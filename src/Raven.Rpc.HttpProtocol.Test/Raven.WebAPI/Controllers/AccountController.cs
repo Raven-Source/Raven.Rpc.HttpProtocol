@@ -28,6 +28,7 @@ namespace Raven.WebAPI.Controllers
 
         public AccountController()
         {
+            
         }
 
         public AccountController(ApplicationUserManager userManager,

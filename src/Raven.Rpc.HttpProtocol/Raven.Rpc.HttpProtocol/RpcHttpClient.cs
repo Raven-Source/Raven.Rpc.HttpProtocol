@@ -128,39 +128,51 @@ namespace Raven.Rpc.HttpProtocol
             var client = _httpClient;
             string requestUrl = _baseUrl + url;
             CreateUrlParams(urlParameters, ref requestUrl);
-            HttpContent content = null;
             using (HttpRequestMessage request = new HttpRequestMessage())
             {
                 request.Method = httpMethod ?? HttpMethod.Post;
                 request.RequestUri = new Uri(requestUrl);
+
+                RpcContext rpcContext = null;
+                rpcContext = new RpcContext();
 
                 // OnSend
                 if (OnRequest != null)
                 {
                     OnRequest(request);
                 }
+                HttpResponseMessage response = null;
 
                 try
                 {
-                    using (HttpResponseMessage response = await client.SendAsync(request))
+                    rpcContext.SendStartTime = DateTime.Now;
+                    response = await client.SendAsync(request);
+                    rpcContext.ReceiveEndTime = DateTime.Now;
+
+                    TResult result = await GetResultAsync<TResult>(response);
+                    rpcContext.ResponseModel = result;
+                    rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
+
+                    if (OnResponse != null)
                     {
-                        TResult result = await GetResultAsync<TResult>(response);
-
-                        if (OnResponse != null)
-                        {
-                            OnResponse(response, result as object);
-                        }
-
-                        return result as TResult;
+                        OnResponse(response, rpcContext);
                     }
+
+                    return result as TResult;
                 }
                 catch (Exception ex)
                 {
-                    if (OnError != null && OnError(ex))
+                    rpcContext.ExceptionTime = DateTime.Now;
+                    if (OnError != null)
                     {
+                        OnError(ex, request, rpcContext);
+                        if (!rpcContext.ExceptionHandled)
+                        {
+                            throw ex;
+                        }
                         if (ErrorResponseHandler != null)
                         {
-                            return ErrorResponseHandler(ex) as TResult;
+                            return ErrorResponseHandler(ex, rpcContext) as TResult;
                         }
                         else
                             return default(TResult);
@@ -170,9 +182,9 @@ namespace Raven.Rpc.HttpProtocol
                 }
                 finally
                 {
-                    if (content != null)
+                    if (response != null)
                     {
-                        content.Dispose();
+                        response.Dispose();
                     }
                 }
             }
@@ -207,32 +219,47 @@ namespace Raven.Rpc.HttpProtocol
                 }
                 request.RequestUri = new Uri(requestUrl);
 
+                RpcContext rpcContext = null;
+                rpcContext = new RpcContext();
+                rpcContext.RequestModel = data;
                 // OnSend
                 if (OnRequest != null)
                 {
                     OnRequest(request);
                 }
+                HttpResponseMessage response = null;
+
                 try
                 {
-                    using (HttpResponseMessage response = await client.SendAsync(request))
+                    rpcContext.SendStartTime = DateTime.Now;
+                    response = await client.SendAsync(request);
+                    rpcContext.ReceiveEndTime = DateTime.Now;
+
+                    TResult result = await GetResultAsync<TResult>(response);
+                    rpcContext.ResponseModel = result;
+                    rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
+
+                    if (OnResponse != null)
                     {
-                        TResult result = await GetResultAsync<TResult>(response);
-
-                        if (OnResponse != null)
-                        {
-                            OnResponse(response, result as object);
-                        }
-
-                        return result as TResult;
+                        OnResponse(response, rpcContext);
                     }
+
+                    return result as TResult;
+
                 }
                 catch (Exception ex)
                 {
-                    if (OnError != null && OnError(ex))
+                    rpcContext.ExceptionTime = DateTime.Now;
+                    if (OnError != null)
                     {
+                        OnError(ex, request, rpcContext);
+                        if (!rpcContext.ExceptionHandled)
+                        {
+                            throw ex;
+                        }
                         if (ErrorResponseHandler != null)
                         {
-                            return ErrorResponseHandler(ex) as TResult;
+                            return ErrorResponseHandler(ex, rpcContext) as TResult;
                         }
                         else
                             return default(TResult);
@@ -245,6 +272,10 @@ namespace Raven.Rpc.HttpProtocol
                     if (content != null)
                     {
                         content.Dispose();
+                    }
+                    if (response != null)
+                    {
+                        response.Dispose();
                     }
                 }
             }
@@ -271,39 +302,59 @@ namespace Raven.Rpc.HttpProtocol
                 request.Method = httpMethod ?? HttpMethod.Post;
                 request.RequestUri = new Uri(requestUrl);
 
+                RpcContext rpcContext = null;
+                rpcContext = new RpcContext();
                 // OnSend
                 if (OnRequest != null)
                 {
                     OnRequest(request);
                 }
+                HttpResponseMessage response = null;
 
                 try
                 {
-                    using (HttpResponseMessage response = client.SendAsync(request).Result)
+                    rpcContext.SendStartTime = DateTime.Now;
+                    response = client.SendAsync(request).Result;
+                    rpcContext.ReceiveEndTime = DateTime.Now;
+
+                    TResult result = GetResultAsync<TResult>(response).Result;
+                    rpcContext.ResponseModel = result;
+                    rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
+
+                    if (OnResponse != null)
                     {
-                        TResult result = GetResultAsync<TResult>(response).Result;
-
-                        if (OnResponse != null)
-                        {
-                            OnResponse(response, result as object);
-                        }
-
-                        return result as TResult;
+                        OnResponse(response, rpcContext);
                     }
+
+                    return result as TResult;
+
                 }
                 catch (Exception ex)
                 {
-                    if (OnError != null && OnError(ex))
+                    rpcContext.ExceptionTime = DateTime.Now;
+                    if (OnError != null)
                     {
+                        OnError(ex, request, rpcContext);
+                        if (!rpcContext.ExceptionHandled)
+                        {
+                            throw ex;
+                        }
                         if (ErrorResponseHandler != null)
                         {
-                            return ErrorResponseHandler(ex) as TResult;
+                            return ErrorResponseHandler(ex, rpcContext) as TResult;
                         }
                         else
                             return default(TResult);
                     }
                     else
                         throw ex;
+                }
+                finally
+                {
+                    if (response != null)
+                    {
+                        response.Dispose();
+                    }
                 }
             }
         }
@@ -338,33 +389,47 @@ namespace Raven.Rpc.HttpProtocol
                 }
                 request.RequestUri = new Uri(requestUrl);
 
+                RpcContext rpcContext = null;
+                rpcContext = new RpcContext();
+                rpcContext.RequestModel = data;
                 // OnSend
                 if (OnRequest != null)
                 {
                     OnRequest(request);
                 }
+                HttpResponseMessage response = null;
 
                 try
                 {
-                    using (HttpResponseMessage response = client.SendAsync(request).Result)
+                    rpcContext.SendStartTime = DateTime.Now;
+                    response = client.SendAsync(request).Result;
+                    rpcContext.ReceiveEndTime = DateTime.Now;
+
+                    TResult result = GetResultAsync<TResult>(response).Result;
+                    rpcContext.ResponseModel = result;
+                    rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
+
+                    if (OnResponse != null)
                     {
-                        TResult result = GetResultAsync<TResult>(response).Result;
-
-                        if (OnResponse != null)
-                        {
-                            OnResponse(response, result as object);
-                        }
-
-                        return result as TResult;
+                        OnResponse(response, rpcContext);
                     }
+
+                    return result as TResult;
+
                 }
                 catch (Exception ex)
                 {
-                    if (OnError != null && OnError(ex))
+                    rpcContext.ExceptionTime = DateTime.Now;
+                    if (OnError != null)
                     {
+                        OnError(ex, request, rpcContext);
+                        if (!rpcContext.ExceptionHandled)
+                        {
+                            throw ex;
+                        }
                         if (ErrorResponseHandler != null)
                         {
-                            return ErrorResponseHandler(ex) as TResult;
+                            return ErrorResponseHandler(ex, rpcContext) as TResult;
                         }
                         else
                             return default(TResult);
@@ -377,6 +442,10 @@ namespace Raven.Rpc.HttpProtocol
                     if (content != null)
                     {
                         content.Dispose();
+                    }
+                    if (response != null)
+                    {
+                        response.Dispose();
                     }
                 }
             }
@@ -1030,7 +1099,7 @@ namespace Raven.Rpc.HttpProtocol
             else
             {
                 throw new Exception(CreateErrorResponseMessage(response));
-                
+
                 //result = default(TResult);
                 //result = ErrorResponseHandler(result, response);
                 //ErrorResponseHandler<TResult>(ref result, response);
@@ -1091,31 +1160,51 @@ namespace Raven.Rpc.HttpProtocol
         //}
 
         /// <summary>
-        /// 请求前,
-        /// arg1 HttpRequestMessage
+        /// 请求前
         /// </summary>
-        public event Action<HttpRequestMessage> OnRequest;
+        public event OnRequestDelegate OnRequest;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request">HttpRequestMessage</param>
+        public delegate void OnRequestDelegate(HttpRequestMessage request);
 
         /// <summary>
-        /// 响应后,
-        /// arg1 HttpResponseMessage,
-        /// arg2 响应数据对象
+        /// 响应后
         /// </summary>
-        public event Action<HttpResponseMessage, object> OnResponse;
+        public event OnResponseDelegate OnResponse;
 
         /// <summary>
-        /// OnError,
-        /// arg1 Exception,
-        /// res 后续是否抛出异常
+        /// 
         /// </summary>
-        public event Func<Exception, bool> OnError;
+        /// <param name="response">HttpResponseMessage</param>
+        /// <param name="rpcContext">rpcContext</param>
+        public delegate void OnResponseDelegate(HttpResponseMessage response, RpcContext rpcContext);
 
         /// <summary>
-        /// 异常情况返回数据处理,
-        /// arg1 Exception,
-        /// res TResult
+        /// OnError
         /// </summary>
-        public event Func<Exception, object> ErrorResponseHandler;
+        public event OnErrorDelegate OnError;
+        /// <summary>
+        /// 后续是否抛出异常
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <param name="request">HttpResponseMessage</param>
+        /// <param name="rpcContext">rpcContext</param>
+        /// <returns></returns>
+        public delegate void OnErrorDelegate(Exception ex, HttpRequestMessage request, RpcContext rpcContext);
+
+        /// <summary>
+        /// 异常情况返回数据处理
+        /// </summary>
+        public event ErrorResponseDelegate ErrorResponseHandler;
+        /// <summary>
+        /// result
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <param name="rpcContext">rpcContext</param>
+        /// <returns></returns>
+        public delegate object ErrorResponseDelegate(Exception ex, RpcContext rpcContext);
 
         ///// <summary>
         ///// 异常处理

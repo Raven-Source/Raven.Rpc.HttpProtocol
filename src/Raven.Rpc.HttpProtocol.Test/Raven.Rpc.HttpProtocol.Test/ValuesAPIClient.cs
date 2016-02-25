@@ -13,40 +13,10 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://192.168.2.12:9001/", timeout: 15000, mediaType: mediaType)
+            : base("http://127.0.0.1:9001/", timeout: 15000, mediaType: mediaType)
         {
-            this.OnRequest += ValuesAPIClient_OnRequest;
-            this.OnResponse += ValuesAPIClient_OnResponse;
-            this.OnError += ValuesAPIClient_OnError;
-            this.RequestContentDataHandler += ValuesAPIClient_RequestContentDataHandler;
-            this.ErrorResponseHandler += ValuesAPIClient_ErrorResponseHandler;
-        }
 
-        private object ValuesAPIClient_ErrorResponseHandler(Exception arg)
-        {
-            return null;
-        }
-
-        private object ValuesAPIClient_RequestContentDataHandler(object data)
-        {
-            return data;
-        }
-
-        private bool ValuesAPIClient_OnError(Exception arg)
-        {
-            return true;
-        }
-
-        private void ValuesAPIClient_OnRequest(HttpRequestMessage obj)
-        {
-            obj.Headers.Add("gg", "xx");
-        }
-
-        private void ValuesAPIClient_OnResponse(HttpResponseMessage arg1, object arg2)
-        {
-            ;
         }
         
-
     }
 }
