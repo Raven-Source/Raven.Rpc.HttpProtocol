@@ -10,8 +10,20 @@ namespace Raven.Rpc.IContractModel
     /// <summary>
     /// IResponseModel
     /// </summary>
+    public interface IResponseModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        string GetCode();
+    }
+
+    /// <summary>
+    /// IResponseModel
+    /// </summary>
     /// <typeparam name="TCode"></typeparam>
-    public interface IResponseModel<TCode>
+    public interface IResponseModel<TCode> : IResponseModel
     {
         /// <summary>
         /// 结果编码，1为成功
@@ -52,8 +64,21 @@ namespace Raven.Rpc.IContractModel
         /// 
         /// </summary>
         public virtual string Message { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetCode()
+        {
+            if (Code is Enum)
+            {
+                return Convert.ToInt32(Code).ToString();
+            }
+            return this.Code.ToString();
+        }
     }
-    
+
     /// <summary>
     /// ResponseModel
     /// </summary>
