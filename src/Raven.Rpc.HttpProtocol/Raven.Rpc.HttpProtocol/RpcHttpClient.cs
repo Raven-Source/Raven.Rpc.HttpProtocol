@@ -1300,8 +1300,8 @@ namespace Raven.Rpc.HttpProtocol
                     _httpClient = null;
                 }
 
-                _mediaTypeFormatter = null;
-                _mediaTypeFormatterArray = null;
+                //_mediaTypeFormatter = null;
+                //_mediaTypeFormatterArray = null;
             }
             isDisposed = true;
         }

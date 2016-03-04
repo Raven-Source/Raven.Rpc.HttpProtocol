@@ -17,6 +17,11 @@ namespace Raven.WebAPI.Controllers
             return View();
         }
 
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+        }
+
         protected override void OnException(ExceptionContext filterContext)
         {
             base.OnException(filterContext);

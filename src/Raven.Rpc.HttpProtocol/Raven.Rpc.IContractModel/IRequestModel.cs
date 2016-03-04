@@ -27,6 +27,11 @@ namespace Raven.Rpc.IContractModel
         /// 
         /// </summary>
         public virtual Header Header { get; set; }
+
+        public RequestModel()
+        {
+            Header = new Header();
+        }
     }
 
     /// <summary>

@@ -58,7 +58,7 @@ namespace Raven.Rpc.IContractModel
         /// <summary>
         /// 
         /// </summary>
-        public virtual KeyValue<string, string>[] Extension { get; set; }
+        public virtual List<KeyValue<string, string>> Extension { get; set; }
 
         /// <summary>
         /// 
@@ -76,6 +76,14 @@ namespace Raven.Rpc.IContractModel
                 return Convert.ToInt32(Code).ToString();
             }
             return this.Code.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ResponseModel()
+        {
+            Extension = new List<KeyValue<string, string>>();
         }
     }
 
