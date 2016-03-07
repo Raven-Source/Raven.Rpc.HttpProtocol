@@ -64,7 +64,7 @@ namespace Raven.Rpc.HttpProtocol.WinAppTest
             {
                 content = txtContent.Text;
             }
-            var result = await client.SendAsync<string, byte[]>(url, content, null, new System.Net.Http.HttpMethod(method));
+            var result = await client.InvokeAsync<string, byte[]>(url, content, null, new System.Net.Http.HttpMethod(method));
             var resString = System.Text.Encoding.UTF8.GetString(result);
             txtRes.Text = resString;
 

@@ -122,7 +122,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> SendAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual async Task<TResult> InvokeAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
@@ -201,7 +201,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> SendAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual async Task<TResult> InvokeAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
@@ -291,7 +291,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Send<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual TResult Invoke<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
@@ -370,7 +370,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Send<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual TResult Invoke<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
@@ -478,7 +478,7 @@ namespace Raven.Rpc.HttpProtocol
 
             //}
 
-            return Send<TResult>(url, urlParameters, HttpMethod.Get, timeout);
+            return Invoke<TResult>(url, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<TResult>(url, urlParameters, HttpMethod.Get, timeout);
+            return InvokeAsync<TResult>(url, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
@@ -542,7 +542,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -577,7 +577,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -644,7 +644,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -681,7 +681,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -715,7 +715,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -749,7 +749,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -784,7 +784,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return Invoke<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -819,7 +819,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return InvokeAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -853,7 +853,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return Invoke<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -887,7 +887,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return InvokeAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -917,7 +917,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return Send<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
+            return Invoke<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
         }
 
         /// <summary>
@@ -947,7 +947,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
             //}
 
-            return SendAsync<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
+            return InvokeAsync<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
         }
 
         /// <summary>
@@ -1300,7 +1300,7 @@ namespace Raven.Rpc.HttpProtocol
                     _httpClient = null;
                 }
 
-                //_mediaTypeFormatter = null;
+                _mediaTypeFormatter = null;
                 //_mediaTypeFormatterArray = null;
             }
             isDisposed = true;

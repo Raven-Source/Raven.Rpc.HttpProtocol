@@ -23,7 +23,19 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        Task<TResult> SendAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        Task<TResult> InvokeAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+            where TResult : class;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="httpMethod"></param>
+        /// <param name="urlParameters"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        Task<TResult> InvokeAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class;
 
         /// <summary>
