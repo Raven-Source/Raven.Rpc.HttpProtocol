@@ -12,7 +12,7 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+    public class RpcHttpClient2 : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
     //where RT : class, new()
     {
         private string _baseUrl;
@@ -37,7 +37,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="baseUrl"></param>
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = 10000)
+        public RpcHttpClient2(string baseUrl, string mediaType = MediaType.json, int timeout = 10000)
         {
             this._baseUrl = baseUrl;
             this._timeout = timeout;
@@ -944,7 +944,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 
         /// </summary>
-        ~RpcHttpClient()
+        ~RpcHttpClient2()
         {
             Dispose(false);
         }

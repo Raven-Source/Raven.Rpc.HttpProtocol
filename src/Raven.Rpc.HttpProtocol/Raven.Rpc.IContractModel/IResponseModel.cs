@@ -17,6 +17,11 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         /// <returns></returns>
         string GetCode();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        List<KeyValue<string, string>> Extension { get; set; }
     }
 
     /// <summary>

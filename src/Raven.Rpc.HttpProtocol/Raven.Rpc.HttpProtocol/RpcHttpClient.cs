@@ -1,4 +1,7 @@
-﻿using Raven.Rpc.HttpProtocol.Formatters;
+﻿#if RavenRpcHttpProtocol40
+#else
+using Raven.Rpc.HttpProtocol.Formatters;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +30,11 @@ namespace Raven.Rpc.HttpProtocol
         private static MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
             new JsonMediaTypeFormatter(),
+#if RavenRpcHttpProtocol40
+#else
             new BsonMediaTypeFormatter(),
             new MsgPackTypeFormatter(),
+#endif
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
         };
@@ -68,17 +74,20 @@ namespace Raven.Rpc.HttpProtocol
             MediaTypeFormatter mediaTypeFormatter = null;
             switch (mediaType)
             {
+#if RavenRpcHttpProtocol40
+#else
+                case MediaType.bson:
+                    mediaTypeFormatter = new BsonMediaTypeFormatter();
+                    break;
                 case MediaType.msgpack:
                     mediaTypeFormatter = new MsgPackTypeFormatter();
                     break;
+#endif
                 case MediaType.form:
                     mediaTypeFormatter = new FormUrlEncodedMediaTypeFormatter();
                     break;
                 case MediaType.xml:
                     mediaTypeFormatter = new XmlMediaTypeFormatter();
-                    break;
-                case MediaType.bson:
-                    mediaTypeFormatter = new BsonMediaTypeFormatter();
                     break;
                 case MediaType.json:
                 default:
@@ -957,11 +966,12 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="baseUrl"></param>
         private void CreateUrlParams(IDictionary<string, string> urlParameters, ref string baseUrl)
         {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder buffer = null;
             AddDefaultUrlParameters(ref urlParameters);
 
             if (urlParameters != null)
             {
+                buffer = new StringBuilder();
                 int i = 0;
                 foreach (string key in urlParameters.Keys)
                 {
@@ -977,21 +987,24 @@ namespace Raven.Rpc.HttpProtocol
                 }
             }
 
-            int index = baseUrl.IndexOf("?");
-            if (index >= 0)
+            if (buffer != null && buffer.Length > 0)
             {
-                if (index < baseUrl.Length - 1)
+                int index = baseUrl.IndexOf("?");
+                if (index >= 0)
                 {
-                    baseUrl += "&" + buffer.ToString();
+                    if (index < baseUrl.Length - 1)
+                    {
+                        baseUrl += "&" + buffer.ToString();
+                    }
+                    else
+                    {
+                        baseUrl += buffer.ToString();
+                    }
                 }
                 else
                 {
-                    baseUrl += buffer.ToString();
+                    baseUrl += "?" + buffer.ToString();
                 }
-            }
-            else
-            {
-                baseUrl += "?" + buffer.ToString();
             }
         }
 
@@ -1008,7 +1021,7 @@ namespace Raven.Rpc.HttpProtocol
 
             if (RequestContentDataHandler != null)
             {
-                contentData = RequestContentDataHandler(contentData);
+                RequestContentDataHandler(ref contentData);
             }
             //RequestContentDataHandler(ref contentData);
             Type type = contentData.GetType();
@@ -1128,7 +1141,7 @@ namespace Raven.Rpc.HttpProtocol
             //dp = FurnishDefaultParameters();
             if (DefaultUrlParametersHandler != null)
             {
-                urlParameters = DefaultUrlParametersHandler(urlParameters);
+                DefaultUrlParametersHandler(ref urlParameters);
             }
 
             //DefaultUrlParametersHandler(ref urlParameters);
@@ -1248,7 +1261,7 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <param name="urlParameters"></param>
         /// <returns></returns>
-        public delegate IDictionary<string, string> DefaultUrlParametersDelegate(IDictionary<string, string> urlParameters);
+        public delegate void DefaultUrlParametersDelegate(ref IDictionary<string, string> urlParameters);
 
         ///// <summary>
         ///// 请求数据处理
@@ -1268,7 +1281,7 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public delegate object RequestContentDataDelegate(object data);
+        public delegate void RequestContentDataDelegate(ref object data);
 
         #region IDispose
 

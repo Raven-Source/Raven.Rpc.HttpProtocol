@@ -719,5 +719,11 @@
             
             </summary>
         </member>
+        <member name="T:Raven.AspNet.WebApiExtensions.Util.CompressionType">
+            <summary>
+            Compression Type
+            deflate,gzip,zlib
+            </summary>
+        </member>
     </members>
 </doc>
