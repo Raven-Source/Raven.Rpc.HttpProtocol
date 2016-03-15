@@ -28,7 +28,7 @@ namespace Raven.WebAPI.Controllers
         [HttpGet]
         public User Get2()
         {
-            throw new Exception("aa");
+            //throw new Exception("aa");
             return new User { Name = "ResponseModel-Get" };
         }
 
