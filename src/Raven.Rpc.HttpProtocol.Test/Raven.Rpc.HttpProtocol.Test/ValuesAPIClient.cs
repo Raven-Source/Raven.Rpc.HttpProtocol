@@ -13,7 +13,7 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://127.0.0.1:9002/", timeout: 15000, mediaType: mediaType)
+            : base("http://192.168.2.12:9002/", timeout: 15000, mediaType: mediaType)
         {
 
         }

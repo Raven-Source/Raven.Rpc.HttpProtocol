@@ -27,17 +27,7 @@ namespace Raven.Rpc.HttpProtocol.Test
             await valuesApi.InvokeAsync<ResponseModel<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
 
             //var result5 = await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get3");
-
-            ResponseModel result = new ResponseModel();
-            result.Message = "111";
-            result = valuesApi.Post<ResponseModel, ResponseModel>("api/Values/Post", result);
-            Assert.AreEqual(result.Message.Substring(0, 3), "111");
-            result = await valuesApi.PostAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
-
-            valuesApi.Invoke<ResponseModel, ResponseModel>("api/Values/Post", result);
-            await valuesApi.InvokeAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
-
-
+            
 
             //result = valuesApi.Get<Result>("api/Values/1");
             //;
@@ -63,6 +53,22 @@ namespace Raven.Rpc.HttpProtocol.Test
 
             //    }
             //}
+        }
+
+        [TestMethod]
+        public async Task Post()
+        {
+            ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.json);
+
+            ResponseModel result = new ResponseModel();
+            result.Message = "111";
+            var result2 = valuesApi.Post<ResponseModel, ResponseModel>("api/Values/Post", result);
+
+            Assert.AreEqual(result2.Message.Substring(0, 3), "111");
+            await valuesApi.PostAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
+
+            valuesApi.Invoke<ResponseModel, ResponseModel>("api/Values/Post", result);
+            await valuesApi.InvokeAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
         }
     }
 }
