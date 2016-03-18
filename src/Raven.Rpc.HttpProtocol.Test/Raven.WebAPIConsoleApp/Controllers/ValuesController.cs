@@ -9,27 +9,31 @@ using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
 using Raven.WebAPI.Models;
 using System.Web;
-using System.Net.Http;
 using Owin;
 
 namespace Raven.WebAPI.Controllers
 {
+    [Raven.AspNet.WebApiExtensions.Attributes.Compression]
     public class ValuesController : ApiController
     {
         // GET api/values/5
         [HttpGet]
-        [BytesData]
         public ResponseModel<User> Get()
         {
-            var res = OwinRequestScopeContext.Current;
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
         [HttpGet]
-        public User Get2()
+        public List<User> Get2()
         {
+            List<User> list = new List<Models.User>();
+            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
             //throw new Exception("aa");
-            return new User { Name = "ResponseModel-Get" };
+            return list;
         }
 
         // POST api/values

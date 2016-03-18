@@ -292,13 +292,14 @@
             
             </summary>
         </member>
-        <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.#ctor(System.String,System.String,System.Int32)">
+        <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.#ctor(System.String,System.String,System.Int32,System.Net.DecompressionMethods)">
             <summary>
             构造函数
             </summary>
             <param name="baseUrl"></param>
             <param name="mediaType"></param>
             <param name="timeout">超时时间（毫秒）</param>
+            <param name="decompressionMethods"></param>
         </member>
         <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.CreateMediaTypeFormatter(System.String)">
             <summary>
@@ -717,12 +718,6 @@
         <member name="M:Raven.Rpc.HttpProtocol.RpcContext.#ctor">
             <summary>
             
-            </summary>
-        </member>
-        <member name="T:Raven.AspNet.WebApiExtensions.Util.CompressionType">
-            <summary>
-            Compression Type
-            deflate,gzip,zlib
             </summary>
         </member>
     </members>

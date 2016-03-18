@@ -13,10 +13,13 @@ namespace Raven.Rpc.HttpProtocol.Test
     {
 
         public ValuesAPIClient(string mediaType)
-            : base("http://192.168.2.12:9002/", timeout: 15000, mediaType: mediaType)
+            : base("http://192.168.2.12:9002/", timeout: 15000, mediaType: mediaType, decompressionMethods: System.Net.DecompressionMethods.Deflate)
         {
-
+            this.OnRequest += ValuesAPIClient_OnRequest;
         }
-        
+
+        private void ValuesAPIClient_OnRequest(HttpRequestMessage request)
+        {
+        }
     }
 }

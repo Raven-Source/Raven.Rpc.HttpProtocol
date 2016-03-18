@@ -5,6 +5,7 @@ using Raven.Rpc.HttpProtocol.Formatters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
@@ -45,14 +46,23 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="baseUrl"></param>
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = 10000)
+        /// <param name="decompressionMethods"></param>
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = 10000, DecompressionMethods decompressionMethods = DecompressionMethods.None)
         {
             this._baseUrl = baseUrl;
             this._timeout = timeout;
             _mediaType = mediaType;
             _mediaTypeFormatter = CreateMediaTypeFormatter(mediaType);
             _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue(mediaType);
-            _httpClient = new HttpClient();
+            if (decompressionMethods != DecompressionMethods.None)
+            {
+                _httpClient = new HttpClient(new HttpClientHandler() { AutomaticDecompression = decompressionMethods });
+                _httpClient.DefaultRequestHeaders.Add("Accept-encoding", decompressionMethods.ToString().ToLower());
+            }
+            else
+            {
+                _httpClient = new HttpClient();
+            }
             InitHttpClient(timeout, _httpClient);
         }
 
@@ -971,6 +981,13 @@ namespace Raven.Rpc.HttpProtocol
             TResult result;
             if (response.IsSuccessStatusCode)
             {
+                //var compressionType = Util.CompressionHelper.GetCompressionType(response.Content.Headers.ContentEncoding);
+                //if (compressionType != Util.CompressionType.None)
+                //{
+                //    var resData = await response.Content.ReadAsByteArrayAsync();
+                //    var uncompressData = Util.CompressionHelper.Uncompress(resData, compressionType);
+                //}
+
                 var fullName = typeof(TResult).FullName;
                 switch (fullName)
                 {
@@ -991,6 +1008,7 @@ namespace Raven.Rpc.HttpProtocol
                 throw new Exception(CreateErrorResponseMessage(response));
             }
         }
+
 
         private string CreateErrorResponseMessage(HttpResponseMessage response)
         {

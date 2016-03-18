@@ -20,14 +20,14 @@ namespace Raven.Rpc.HttpProtocol.Test
 
             Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");
 
-            valuesApi.Get<ResponseModel<User>>("api/Values/get2");
-            await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get2");
+            var a = valuesApi.Get<List<User>>("api/Values/get2");
+            a = await valuesApi.GetAsync<List<User>>("api/Values/get2");
 
-            valuesApi.Invoke<ResponseModel<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
-            await valuesApi.InvokeAsync<ResponseModel<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
+            a = valuesApi.Invoke<List<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
+            a = await valuesApi.InvokeAsync<List<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
 
             //var result5 = await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get3");
-            
+
 
             //result = valuesApi.Get<Result>("api/Values/1");
             //;
