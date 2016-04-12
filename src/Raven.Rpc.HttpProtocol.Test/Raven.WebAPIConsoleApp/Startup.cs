@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.Owin;
 
 namespace Raven.WebAPIConsoleApp
 {
@@ -36,6 +37,7 @@ namespace Raven.WebAPIConsoleApp
 
             appBuilder.UseRequestScopeContext();
             appBuilder.UseWebApi(config);
+            
             //CallContext
             //appBuilder.Use(
         }

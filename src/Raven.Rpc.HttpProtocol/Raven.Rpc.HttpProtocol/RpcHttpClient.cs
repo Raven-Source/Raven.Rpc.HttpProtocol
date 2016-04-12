@@ -47,7 +47,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
         /// <param name="decompressionMethods"></param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = 10000, DecompressionMethods decompressionMethods = DecompressionMethods.None)
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = 10000, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
             this._baseUrl = baseUrl;
             this._timeout = timeout;
@@ -196,10 +196,10 @@ namespace Raven.Rpc.HttpProtocol
                 try
                 {
                     rpcContext.SendStartTime = DateTime.Now;
-                    response = await client.SendAsync(request);
+                    response = await client.SendAsync(request).ConfigureAwait(false);
                     rpcContext.ReceiveEndTime = DateTime.Now;
 
-                    TResult result = await GetResultAsync<TResult>(response);
+                    TResult result = await GetResultAsync<TResult>(response).ConfigureAwait(false);
                     rpcContext.ResponseModel = result;
                     rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
 
@@ -208,7 +208,7 @@ namespace Raven.Rpc.HttpProtocol
                         OnResponse(response, rpcContext);
                     }
 
-                    return result as TResult;
+                    return result;
 
                 }
                 catch (Exception ex)
@@ -322,7 +322,7 @@ namespace Raven.Rpc.HttpProtocol
                         OnResponse(response, rpcContext);
                     }
 
-                    return result as TResult;
+                    return result;
 
                 }
                 catch (Exception ex)
@@ -975,10 +975,9 @@ namespace Raven.Rpc.HttpProtocol
         /// <typeparam name="TResult"></typeparam>
         /// <param name="response"></param>
         /// <returns></returns>
-        private async Task<TResult> GetResultAsync<TResult>(HttpResponseMessage response)
+        private Task<TResult> GetResultAsync<TResult>(HttpResponseMessage response)
             where TResult : class
         {
-            TResult result;
             if (response.IsSuccessStatusCode)
             {
                 //var compressionType = Util.CompressionHelper.GetCompressionType(response.Content.Headers.ContentEncoding);
@@ -991,17 +990,22 @@ namespace Raven.Rpc.HttpProtocol
                 var fullName = typeof(TResult).FullName;
                 switch (fullName)
                 {
+                    //case "System.String":
+                    //    result = await response.Content.ReadAsStringAsync().ConfigureAwait(false) as TResult;
+                    //    break;
+                    //case "System.Byte[]":
+                    //    result = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false) as TResult;
+                    //    break;
+                    //default:
+                    //    result = await response.Content.ReadAsAsync<TResult>(_mediaTypeFormatterArray).ConfigureAwait(false);
+                    //    break;
                     case "System.String":
-                        result = await response.Content.ReadAsStringAsync() as TResult;
-                        break;
+                        return response.Content.ReadAsStringAsync().ContinueWith(x => x.Result as TResult);
                     case "System.Byte[]":
-                        result = await response.Content.ReadAsByteArrayAsync() as TResult;
-                        break;
+                        return response.Content.ReadAsByteArrayAsync().ContinueWith(x => x.Result as TResult);
                     default:
-                        result = await response.Content.ReadAsAsync<TResult>(_mediaTypeFormatterArray);
-                        break;
+                        return response.Content.ReadAsAsync<TResult>();
                 }
-                return result;
             }
             else
             {
