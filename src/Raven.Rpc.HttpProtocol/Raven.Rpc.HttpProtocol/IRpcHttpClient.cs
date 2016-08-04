@@ -10,7 +10,7 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public interface IRpcHttpClient
+    public interface IRpcHttpClient : IRpcHttpClientAsync
     {
         /// <summary>
         /// 
