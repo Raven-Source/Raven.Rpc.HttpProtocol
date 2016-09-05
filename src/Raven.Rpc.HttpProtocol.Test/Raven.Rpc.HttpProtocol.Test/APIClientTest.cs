@@ -26,6 +26,15 @@ namespace Raven.Rpc.HttpProtocol.Test
             a = valuesApi.Invoke<List<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
             a = await valuesApi.InvokeAsync<List<User>>("api/Values/get2", httpMethod: HttpMethod.Get);
 
+            var _ = valuesApi.Get<ResponseModel<User>>("api/Values/get");
+            try
+            {
+                _ = valuesApi.Get<ResponseModel<User>>("api/Values/get", timeout: 500);
+            }
+            catch (Exception ex)
+            {
+
+            }
             //var result5 = await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get3");
 
 

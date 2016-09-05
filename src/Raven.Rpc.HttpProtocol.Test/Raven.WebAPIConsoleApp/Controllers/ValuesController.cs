@@ -13,13 +13,14 @@ using Owin;
 
 namespace Raven.WebAPI.Controllers
 {
-    [Raven.AspNet.WebApiExtensions.Attributes.Compression]
+    //[Raven.AspNet.WebApiExtensions.Attributes.Compression]
     public class ValuesController : ApiController
     {
         // GET api/values/5
         [HttpGet]
         public ResponseModel<User> Get()
         {
+            //Thread.Sleep(1000);
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
@@ -34,6 +35,12 @@ namespace Raven.WebAPI.Controllers
             list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
             //throw new Exception("aa");
             return list;
+        }
+
+        [HttpGet]
+        public string Get3()
+        {
+            return "hello";
         }
 
         // POST api/values

@@ -26,7 +26,7 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 
         void Get()
         {
-            int seed = 5000;
+            int seed = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["seed"]);
             var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1").Result;
             var result3 = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1").Result;
 
@@ -39,12 +39,12 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
             sw.Restart();
             for (var i = 0; i < seed; i++)
             {
-                var task = valuesApi_json.GetAsync<ResponseModel>("api/Values/Get/1", timeout: 15000);
-                taskList[i] = task;
+                taskList[i] = valuesApi_json.GetAsync<string>("api/Values/Get3", timeout: 15000);
             }
             Task.WaitAll(taskList);
             sw.Stop();
             Console.WriteLine("valuesApi_json:GetAsync:" + sw.ElapsedMilliseconds.ToString());
+            Console.WriteLine("tps:{0}", seed / (double)sw.ElapsedMilliseconds * 1000);
 
             //Thread.Sleep(5000);
             //taskList.Clear();
