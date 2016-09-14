@@ -28,6 +28,9 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         public virtual Header Header { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public RequestModel()
         {
             Header = new Header();
@@ -54,10 +57,15 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         public string TraceID { get; set; }
 
+        ///// <summary>
+        ///// UUID
+        ///// </summary>
+        //public string UUID { get; set; }
+
         /// <summary>
-        /// UUID
+        /// 
         /// </summary>
-        public string UUID { get; set; }
+        public int Source { get; set; }
 
     }
 
