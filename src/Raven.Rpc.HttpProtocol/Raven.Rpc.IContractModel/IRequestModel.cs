@@ -57,15 +57,10 @@ namespace Raven.Rpc.IContractModel
         /// </summary>
         public string TraceID { get; set; }
 
-        ///// <summary>
-        ///// UUID
-        ///// </summary>
-        //public string UUID { get; set; }
-
         /// <summary>
-        /// 
+        /// Version
         /// </summary>
-        public int Source { get; set; }
+        public string Version { get; set; }
 
     }
 
