@@ -53,6 +53,12 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="decompressionMethods"></param>
         public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
+            var defaultConnectionLimit = Environment.ProcessorCount * 6;
+            if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
+            {
+                System.Net.ServicePointManager.DefaultConnectionLimit = defaultConnectionLimit;
+            }
+
             this._baseUrl = baseUrl;
             this._timeout = timeout > 0 ? timeout : defalut_timeout;
             _mediaType = mediaType;
@@ -217,18 +223,27 @@ namespace Raven.Rpc.HttpProtocol
                 try
                 {
                     rpcContext.SendStartTime = DateTime.Now;
-                    if (timeout.HasValue && timeout.Value > 0)
+                    if (!timeout.HasValue || timeout.Value <= 0)
                     {
-                        using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
-                        {
-                            response = await client.SendAsync(request, cancelTokenSource.Token).ConfigureAwait(false);
-                        }
+                        timeout = this._timeout;
                     }
-                    else
+                    using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
                     {
-                        response = await client.SendAsync(request).ConfigureAwait(false);
+                        response = await client.SendAsync(request, cancelTokenSource.Token).ConfigureAwait(false);
                     }
-                    //response = await client.SendAsync(request).ConfigureAwait(false);
+
+                    //if (timeout.HasValue && timeout.Value > 0)
+                    //{
+                    //    using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
+                    //    {
+                    //        response = await client.SendAsync(request, cancelTokenSource.Token).ConfigureAwait(false);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    response = await client.SendAsync(request).ConfigureAwait(false);
+                    //}
+
                     rpcContext.ReceiveEndTime = DateTime.Now;
 
                     TResult result = await GetResultAsync<TResult>(response).ConfigureAwait(false);
@@ -347,18 +362,27 @@ namespace Raven.Rpc.HttpProtocol
                 {
                     rpcContext.SendStartTime = DateTime.Now;
 
-                    if (timeout.HasValue && timeout.Value > 0)
+                    if (!timeout.HasValue || timeout.Value <= 0)
                     {
-                        using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
-                        {
-                            response = client.SendAsync(request, cancelTokenSource.Token).Result;
-                        }
+                        timeout = this._timeout;
                     }
-                    else
+                    using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
                     {
-                        response = client.SendAsync(request).Result;
+                        response = client.SendAsync(request, cancelTokenSource.Token).Result;
                     }
-                    //response = client.SendAsync(request).Result;
+
+                    //if (timeout.HasValue && timeout.Value > 0)
+                    //{
+                    //    using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource(timeout.Value))
+                    //    {
+                    //        response = client.SendAsync(request, cancelTokenSource.Token).Result;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    response = client.SendAsync(request).Result;
+                    //}
+
                     rpcContext.ReceiveEndTime = DateTime.Now;
 
                     TResult result = GetResult<TResult>(response);

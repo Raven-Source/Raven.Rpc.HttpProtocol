@@ -32,6 +32,8 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 
             //valuesApi_bson.Send<ResponseModel, object>("api/Values/Get/1");
 
+            
+
             Stopwatch sw = new Stopwatch();
 
             Task[] taskList = new Task[seed];
