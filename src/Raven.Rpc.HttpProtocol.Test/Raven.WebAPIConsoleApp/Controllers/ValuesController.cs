@@ -20,7 +20,7 @@ namespace Raven.WebAPI.Controllers
         [HttpGet]
         public ResponseModel<User> Get()
         {
-            //Thread.Sleep(1000);
+            Thread.Sleep(1001);
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 

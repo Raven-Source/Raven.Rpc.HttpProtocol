@@ -27,7 +27,14 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
         void Get()
         {
             int seed = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["seed"]);
-            var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1").Result;
+            try
+            {
+                var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1", timeout: 1000).Result;
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
             var result3 = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1").Result;
 
             //valuesApi_bson.Send<ResponseModel, object>("api/Values/Get/1");

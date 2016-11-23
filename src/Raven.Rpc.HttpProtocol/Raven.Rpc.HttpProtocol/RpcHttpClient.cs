@@ -1,5 +1,6 @@
 ﻿#if RavenRpcHttpProtocol40
 #else
+using Raven.Rpc.HttpProtocol.Exceptions;
 using Raven.Rpc.HttpProtocol.Formatters;
 #endif
 using System;
@@ -266,7 +267,7 @@ namespace Raven.Rpc.HttpProtocol
                         OnError(ex, request, rpcContext);
                         if (!rpcContext.ExceptionHandled)
                         {
-                            throw ex;
+                            throw ExceptionOptimize.Filter(ex);
                         }
                         if (ErrorResponseHandler != null)
                         {
@@ -276,7 +277,7 @@ namespace Raven.Rpc.HttpProtocol
                             return default(TResult);
                     }
                     else
-                        throw ex;
+                        throw ExceptionOptimize.Filter(ex);
                 }
                 finally
                 {
@@ -405,7 +406,7 @@ namespace Raven.Rpc.HttpProtocol
                         OnError(ex, request, rpcContext);
                         if (!rpcContext.ExceptionHandled)
                         {
-                            throw ex;
+                            throw ExceptionOptimize.Filter(ex);
                         }
                         if (ErrorResponseHandler != null)
                         {
@@ -415,7 +416,7 @@ namespace Raven.Rpc.HttpProtocol
                             return default(TResult);
                     }
                     else
-                        throw ex;
+                        throw ExceptionOptimize.Filter(ex);
                 }
                 finally
                 {
@@ -914,11 +915,11 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 后续是否抛出异常
         /// </summary>
-        /// <param name="ex">Exception</param>
+        /// <param name="origEx">original Exception</param>
         /// <param name="request">HttpResponseMessage</param>
         /// <param name="rpcContext">rpcContext</param>
         /// <returns></returns>
-        public delegate void OnErrorDelegate(Exception ex, HttpRequestMessage request, RpcContext rpcContext);
+        public delegate void OnErrorDelegate(Exception origEx, HttpRequestMessage request, RpcContext rpcContext);
 
         /// <summary>
         /// 异常情况返回数据处理
@@ -927,10 +928,10 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// result
         /// </summary>
-        /// <param name="ex">Exception</param>
+        /// <param name="origEx">original exception</param>
         /// <param name="rpcContext">rpcContext</param>
         /// <returns></returns>
-        public delegate object ErrorResponseDelegate(Exception ex, RpcContext rpcContext);
+        public delegate object ErrorResponseDelegate(Exception origEx, RpcContext rpcContext);
 
         ///// <summary>
         ///// 异常处理

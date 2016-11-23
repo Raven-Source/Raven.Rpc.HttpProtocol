@@ -2,19 +2,18 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Raven.Rpc.HttpProtocol</id>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
         <authors>LiangYi</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>
+2.1.1
+优化了超时异常
 2.1.0
 优化连接限制配置
-
 2.0.4
 线程调用优化
-
 2.0.3
 add DecompressionMethods
-
 2.0.2
 update 优化了 OnRequest OnResponse OnError ErrorResponseHandler DefaultUrlParametersHandler RequestContentDataHandler 执行事件
 update 重新封装了post、get方法，统一处理HttpContent

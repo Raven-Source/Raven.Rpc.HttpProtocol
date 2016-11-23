@@ -4,6 +4,39 @@
         <name>Raven.Rpc.HttpProtocol</name>
     </assembly>
     <members>
+        <member name="T:Raven.Rpc.HttpProtocol.Exceptions.ExceptionOptimize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.Rpc.HttpProtocol.Exceptions.ExceptionOptimize.Filter(System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Raven.Rpc.HttpProtocol.Exceptions.InvokeTimeoutException">
+            <summary>
+            远程调用超时
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.Exceptions.InvokeTimeoutException.ExceptionMessage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.Rpc.HttpProtocol.Exceptions.InvokeTimeoutException.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Raven.Rpc.HttpProtocol.Exceptions.InvokeTimeoutException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+        </member>
         <member name="T:Raven.Rpc.HttpProtocol.Formatters.MsgPackTypeFormatter">
             <summary>
             MediaType:"application/msgpack"
@@ -286,6 +319,41 @@
             <param name="urlParameters">url parameter 数据</param>
             <param name="timeout"></param>
             <returns></returns>
+        </member>
+        <member name="T:Raven.Rpc.HttpProtocol.MediaType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.bytes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.xml">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.json">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.bson">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.form">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.MediaType.msgpack">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:Raven.Rpc.HttpProtocol.RpcHttpClient">
             <summary>
@@ -647,7 +715,7 @@
             <summary>
             后续是否抛出异常
             </summary>
-            <param name="ex">Exception</param>
+            <param name="origEx">original Exception</param>
             <param name="request">HttpResponseMessage</param>
             <param name="rpcContext">rpcContext</param>
             <returns></returns>
@@ -656,7 +724,7 @@
             <summary>
             result
             </summary>
-            <param name="ex">Exception</param>
+            <param name="origEx">original exception</param>
             <param name="rpcContext">rpcContext</param>
             <returns></returns>
         </member>

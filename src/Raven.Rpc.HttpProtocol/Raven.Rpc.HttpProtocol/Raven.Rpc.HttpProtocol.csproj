@@ -67,6 +67,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ExceptionProcess.cs" />
+    <Compile Include="Exceptions\InvokeTimeoutException.cs" />
     <Compile Include="Formatters\MsgPackTypeFormatter.cs" />
     <Compile Include="IRpcHttpClient.cs" />
     <Compile Include="IRpcHttpClientAsync.cs" />
