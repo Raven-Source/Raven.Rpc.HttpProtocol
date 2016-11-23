@@ -18,7 +18,7 @@ add DecompressionMethods
 update 优化了 OnRequest OnResponse OnError ErrorResponseHandler DefaultUrlParametersHandler RequestContentDataHandler 执行事件
 update 重新封装了post、get方法，统一处理HttpContent
 add MsgPackTypeFormatter
-</description>
+		</description>
         <releaseNotes>
 		</releaseNotes>
         <dependencies>
