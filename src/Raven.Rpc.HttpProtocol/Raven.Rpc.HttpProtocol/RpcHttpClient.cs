@@ -32,7 +32,8 @@ namespace Raven.Rpc.HttpProtocol
         private MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
         private DecompressionMethods _decompressionMethods;
 
-        private static Encoding defaultEncoding = Encoding.UTF8;
+        private HttpClientHandler _handler;
+        private static Encoding _defaultEncoding = Encoding.UTF8;
         private static MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
             new JsonMediaTypeFormatter(),
@@ -52,7 +53,9 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
         /// <param name="decompressionMethods"></param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
+        /// <param name="encoding">默认UTF8</param>
+        /// <param name="handler">内部调用Dispose</param>
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate, Encoding encoding = null, HttpClientHandler handler = null)
         {
             var defaultConnectionLimit = Environment.ProcessorCount * 6;
             if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
@@ -67,6 +70,9 @@ namespace Raven.Rpc.HttpProtocol
             _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue(mediaType);
 
             _decompressionMethods = decompressionMethods;
+            _defaultEncoding = encoding ?? Encoding.UTF8;
+
+            _handler = handler ?? new HttpClientHandler();
             //if (decompressionMethods != DecompressionMethods.None)
             //{
             //    _httpClient = new HttpClient(new HttpClientHandler() { AutomaticDecompression = decompressionMethods });
@@ -131,12 +137,13 @@ namespace Raven.Rpc.HttpProtocol
             HttpClient client;
             if (_decompressionMethods != DecompressionMethods.None)
             {
-                client = new HttpClient(new HttpClientHandler() { AutomaticDecompression = _decompressionMethods });
-                client.DefaultRequestHeaders.Add("Accept-encoding", _decompressionMethods.ToString().ToLower());
+                _handler.AutomaticDecompression = _decompressionMethods;
+                //client = new HttpClient(new HttpClientHandler() { AutomaticDecompression = _decompressionMethods });
             }
-            else
+            client = new HttpClient(_handler);
+            if (_decompressionMethods != DecompressionMethods.None)
             {
-                client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Accept-encoding", _decompressionMethods.ToString().ToLower());
             }
 
             if (timeout.HasValue)
@@ -743,7 +750,7 @@ namespace Raven.Rpc.HttpProtocol
             switch (fullName)
             {
                 case "System.String":
-                    httpContent = new StringContent(data.ToString(), defaultEncoding, _mediaType);
+                    httpContent = new StringContent(data.ToString(), _defaultEncoding, _mediaType);
                     break;
                 case "System.Byte[]":
                     httpContent = new ByteArrayContent(data as byte[]);

@@ -360,7 +360,7 @@
             
             </summary>
         </member>
-        <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.#ctor(System.String,System.String,System.Int32,System.Net.DecompressionMethods)">
+        <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.#ctor(System.String,System.String,System.Int32,System.Net.DecompressionMethods,System.Text.Encoding,System.Net.Http.HttpClientHandler)">
             <summary>
             构造函数
             </summary>
@@ -368,6 +368,8 @@
             <param name="mediaType"></param>
             <param name="timeout">超时时间（毫秒）</param>
             <param name="decompressionMethods"></param>
+            <param name="encoding">默认UTF8</param>
+            <param name="handler">内部调用Dispose</param>
         </member>
         <member name="M:Raven.Rpc.HttpProtocol.RpcHttpClient.CreateMediaTypeFormatter(System.String)">
             <summary>
