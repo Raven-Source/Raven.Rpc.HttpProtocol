@@ -49,8 +49,14 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 
         /// </summary>
+        public Dictionary<string, object> Items;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public RpcContext()
         {
+            Items = new Dictionary<string, object>();
             ExceptionHandled = false;
         }
     }

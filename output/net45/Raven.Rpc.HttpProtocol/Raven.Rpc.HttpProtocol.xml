@@ -705,13 +705,14 @@
             
             </summary>
             <param name="request">HttpRequestMessage</param>
+            <param name="rpcContext">RpcContext</param>
         </member>
         <member name="T:Raven.Rpc.HttpProtocol.RpcHttpClient.OnResponseDelegate">
             <summary>
             
             </summary>
             <param name="response">HttpResponseMessage</param>
-            <param name="rpcContext">rpcContext</param>
+            <param name="rpcContext">RpcContext</param>
         </member>
         <member name="T:Raven.Rpc.HttpProtocol.RpcHttpClient.OnErrorDelegate">
             <summary>
@@ -719,7 +720,7 @@
             </summary>
             <param name="origEx">original Exception</param>
             <param name="request">HttpResponseMessage</param>
-            <param name="rpcContext">rpcContext</param>
+            <param name="rpcContext">RpcContext</param>
             <returns></returns>
         </member>
         <member name="T:Raven.Rpc.HttpProtocol.RpcHttpClient.ErrorResponseDelegate">
@@ -727,7 +728,7 @@
             result
             </summary>
             <param name="origEx">original exception</param>
-            <param name="rpcContext">rpcContext</param>
+            <param name="rpcContext">RpcContext</param>
             <returns></returns>
         </member>
         <member name="T:Raven.Rpc.HttpProtocol.RpcHttpClient.DefaultUrlParametersDelegate">
@@ -782,6 +783,11 @@
         <member name="F:Raven.Rpc.HttpProtocol.RpcContext.ExceptionHandled">
             <summary>
             是否已处理异常
+            </summary>
+        </member>
+        <member name="F:Raven.Rpc.HttpProtocol.RpcContext.Items">
+            <summary>
+            
             </summary>
         </member>
         <member name="M:Raven.Rpc.HttpProtocol.RpcContext.#ctor">

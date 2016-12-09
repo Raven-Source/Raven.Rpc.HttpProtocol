@@ -76,8 +76,8 @@ namespace Raven.Rpc.HttpProtocol.Test
             Assert.AreEqual(result2.Message.Substring(0, 3), "111");
             await valuesApi.PostAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
 
-            valuesApi.Invoke<ResponseModel, ResponseModel>("api/Values/Post", result);
-            await valuesApi.InvokeAsync<ResponseModel, ResponseModel>("api/Values/Post", result);
+            valuesApi.Invoke<ResponseModel, ResponseModel>("api/Values/Post", result, httpMethod: HttpMethod.Post);
+            await valuesApi.InvokeAsync<ResponseModel, ResponseModel>("api/Values/Post", result, httpMethod: HttpMethod.Post);
         }
     }
 }

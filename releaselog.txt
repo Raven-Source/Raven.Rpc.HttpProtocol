@@ -1,3 +1,6 @@
+2.2.0
+RpcContext添加Item，修改OnRequestDelegate事件
+
 2.1.2
 构造函数添加自定义Encoding、HttpClientHandler参数
 

@@ -211,20 +211,19 @@ namespace Raven.Rpc.HttpProtocol
                     RequestContentDataHandler(ref contentData);
                 }
 
-                if (contentData != null)
+                if (contentData != null && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put))
                 {
                     content = CreateContent(contentData);
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
 
-                RpcContext rpcContext = null;
-                rpcContext = new RpcContext();
+                RpcContext rpcContext = new RpcContext();
                 rpcContext.RequestModel = contentData;
                 // OnSend
                 if (OnRequest != null)
                 {
-                    OnRequest(request);
+                    OnRequest(request, rpcContext);
                 }
                 HttpResponseMessage response = null;
 
@@ -349,20 +348,19 @@ namespace Raven.Rpc.HttpProtocol
                     RequestContentDataHandler(ref contentData);
                 }
 
-                if (contentData != null)
+                if (contentData != null && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put))
                 {
                     content = CreateContent(contentData);
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
 
-                RpcContext rpcContext = null;
-                rpcContext = new RpcContext();
+                RpcContext rpcContext = new RpcContext();
                 rpcContext.RequestModel = contentData;
                 // OnSend
                 if (OnRequest != null)
                 {
-                    OnRequest(request);
+                    OnRequest(request, rpcContext);
                 }
                 HttpResponseMessage response = null;
 
@@ -901,7 +899,8 @@ namespace Raven.Rpc.HttpProtocol
         /// 
         /// </summary>
         /// <param name="request">HttpRequestMessage</param>
-        public delegate void OnRequestDelegate(HttpRequestMessage request);
+        /// <param name="rpcContext">RpcContext</param>
+        public delegate void OnRequestDelegate(HttpRequestMessage request, RpcContext rpcContext);
 
         /// <summary>
         /// 响应后
@@ -912,7 +911,7 @@ namespace Raven.Rpc.HttpProtocol
         /// 
         /// </summary>
         /// <param name="response">HttpResponseMessage</param>
-        /// <param name="rpcContext">rpcContext</param>
+        /// <param name="rpcContext">RpcContext</param>
         public delegate void OnResponseDelegate(HttpResponseMessage response, RpcContext rpcContext);
 
         /// <summary>
@@ -924,7 +923,7 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <param name="origEx">original Exception</param>
         /// <param name="request">HttpResponseMessage</param>
-        /// <param name="rpcContext">rpcContext</param>
+        /// <param name="rpcContext">RpcContext</param>
         /// <returns></returns>
         public delegate void OnErrorDelegate(Exception origEx, HttpRequestMessage request, RpcContext rpcContext);
 
@@ -936,7 +935,7 @@ namespace Raven.Rpc.HttpProtocol
         /// result
         /// </summary>
         /// <param name="origEx">original exception</param>
-        /// <param name="rpcContext">rpcContext</param>
+        /// <param name="rpcContext">RpcContext</param>
         /// <returns></returns>
         public delegate object ErrorResponseDelegate(Exception origEx, RpcContext rpcContext);
 
