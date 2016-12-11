@@ -211,7 +211,7 @@ namespace Raven.Rpc.HttpProtocol
                     RequestContentDataHandler(ref contentData);
                 }
 
-                if (contentData != null && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put))
+                if (contentData != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
                 {
                     content = CreateContent(contentData);
                     request.Content = content;
@@ -348,7 +348,7 @@ namespace Raven.Rpc.HttpProtocol
                     RequestContentDataHandler(ref contentData);
                 }
 
-                if (contentData != null && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put))
+                if (contentData != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
                 {
                     content = CreateContent(contentData);
                     request.Content = content;
