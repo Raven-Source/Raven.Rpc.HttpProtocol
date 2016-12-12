@@ -45,7 +45,7 @@ namespace Raven.Rpc.HttpProtocol
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
         };
-        
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -53,9 +53,8 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
         /// <param name="decompressionMethods"></param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate) : this(baseUrl, mediaType, timeout, DecompressionMethods.Deflate, null, null)
-        {
-        }
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate) : this(baseUrl, null, null, mediaType, timeout, decompressionMethods)
+        { }
 
         /// <summary>
         /// 构造函数
@@ -66,7 +65,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="decompressionMethods"></param>
         /// <param name="encoding">默认UTF8</param>
         /// <param name="handler">内部调用Dispose</param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate, Encoding encoding = null, HttpClientHandler handler = null)
+        public RpcHttpClient(string baseUrl, Encoding encoding, HttpClientHandler handler, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
             var defaultConnectionLimit = Environment.ProcessorCount * 6;
             if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
