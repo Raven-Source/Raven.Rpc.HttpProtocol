@@ -45,6 +45,17 @@ namespace Raven.Rpc.HttpProtocol
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
         };
+        
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        /// <param name="mediaType"></param>
+        /// <param name="timeout">超时时间（毫秒）</param>
+        /// <param name="decompressionMethods"></param>
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate) : this(baseUrl, mediaType, timeout, DecompressionMethods.Deflate, null, null)
+        {
+        }
 
         /// <summary>
         /// 构造函数
