@@ -4,6 +4,7 @@
         <id>Raven.Rpc.HttpProtocol</id>
         <version>2.2.0</version>
         <authors>LiangYi</authors>
+        <iconUrl>http://res-1251080116.costj.myqcloud.com/raven4.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>
 2.2.0
