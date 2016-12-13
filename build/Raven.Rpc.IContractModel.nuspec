@@ -3,7 +3,8 @@
     <metadata>
         <id>Raven.Rpc.IContractModel</id>
         <version>2.2.0</version>
-        <authors>LiangYi</authors>
+        <authors>Yi Liang</authors>
+        <owners>indifer@126.com</owners>
         <iconUrl>http://res-1251080116.costj.myqcloud.com/raven4.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>RPC DTO</description>
