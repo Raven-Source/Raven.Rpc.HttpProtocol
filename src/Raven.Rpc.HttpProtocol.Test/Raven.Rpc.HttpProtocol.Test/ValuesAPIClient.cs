@@ -1,5 +1,4 @@
 ﻿using Raven.Rpc.HttpProtocol;
-using Raven.WebAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

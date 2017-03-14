@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Raven.WebAPIConsoleApp
 {
@@ -13,11 +14,14 @@ namespace Raven.WebAPIConsoleApp
             var host = "http://127.0.0.1:9002/";
             using (Microsoft.Owin.Hosting.WebApp.Start<Startup>(host))
             {
+
                 Console.WriteLine(host);
                 Console.WriteLine("Press [enter] to quit...");
                 Console.ReadLine();
             }
-            
+
+
         }
+
     }
 }

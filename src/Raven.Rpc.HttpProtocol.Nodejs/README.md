@@ -1,3 +1,0 @@
-﻿# Raven.Rpc.HttpProtocol.Nodejs
-
-

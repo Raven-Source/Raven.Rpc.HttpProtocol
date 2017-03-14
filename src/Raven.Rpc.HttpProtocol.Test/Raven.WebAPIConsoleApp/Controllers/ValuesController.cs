@@ -7,9 +7,9 @@ using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
-using Raven.WebAPI.Models;
 using System.Web;
 using Owin;
+using Raven.WebAPIConsoleApp.Models;
 
 namespace Raven.WebAPI.Controllers
 {
@@ -20,19 +20,18 @@ namespace Raven.WebAPI.Controllers
         [HttpGet]
         public ResponseModel<User> Get()
         {
-            Thread.Sleep(1001);
             return new ResponseModel<User>() { Data = new User { Name = "ResponseModel-Get" } };
         }
 
         [HttpGet]
         public List<User> Get2()
         {
-            List<User> list = new List<Models.User>();
-            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
-            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
-            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
-            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
-            list.Add(new Models.User() { Name = Guid.NewGuid().ToString() });
+            List<User> list = new List<User>();
+            list.Add(new User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new User() { Name = Guid.NewGuid().ToString() });
+            list.Add(new User() { Name = Guid.NewGuid().ToString() });
             //throw new Exception("aa");
             return list;
         }

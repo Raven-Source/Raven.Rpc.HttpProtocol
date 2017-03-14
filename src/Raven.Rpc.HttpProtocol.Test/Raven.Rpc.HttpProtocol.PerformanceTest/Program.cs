@@ -1,5 +1,5 @@
 ﻿using Raven.Rpc.HttpProtocol.Test;
-using Raven.WebAPI.Models;
+using Raven.WebAPIConsoleApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +31,7 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
             {
                 var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1", timeout: 1000).Result;
             }
-            catch (Exception ex)
+            catch 
             {
                 ;
             }

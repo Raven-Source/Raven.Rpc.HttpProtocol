@@ -1,11 +1,10 @@
-﻿#if RavenRpcHttpProtocol40
-#else
+﻿//#if net45
+//using Raven.Rpc.HttpProtocol.Formatters;
+//#else
+//#endif
 using Raven.Rpc.HttpProtocol.Exceptions;
-using Raven.Rpc.HttpProtocol.Formatters;
-#endif
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -37,11 +36,11 @@ namespace Raven.Rpc.HttpProtocol
         private static MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
             new JsonMediaTypeFormatter(),
-#if RavenRpcHttpProtocol40
-#else
-            new BsonMediaTypeFormatter(),
-            new MsgPackTypeFormatter(),
-#endif
+//#if net45
+//            new BsonMediaTypeFormatter(),
+//            new MsgPackTypeFormatter(),
+//#else
+//#endif
             new FormUrlEncodedMediaTypeFormatter(),
             new XmlMediaTypeFormatter(),
         };
@@ -67,11 +66,13 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="handler">内部调用Dispose</param>
         public RpcHttpClient(string baseUrl, Encoding encoding, HttpClientHandler handler, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
+#if net45
             var defaultConnectionLimit = Environment.ProcessorCount * 6;
             if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
             {
                 System.Net.ServicePointManager.DefaultConnectionLimit = defaultConnectionLimit;
             }
+#endif
 
             this._baseUrl = baseUrl;
             this._timeout = timeout > 0 ? timeout : defalut_timeout;
@@ -114,15 +115,15 @@ namespace Raven.Rpc.HttpProtocol
             MediaTypeFormatter mediaTypeFormatter = null;
             switch (mediaType)
             {
-#if RavenRpcHttpProtocol40
-#else
-                case MediaType.bson:
-                    mediaTypeFormatter = new BsonMediaTypeFormatter();
-                    break;
-                case MediaType.msgpack:
-                    mediaTypeFormatter = new MsgPackTypeFormatter();
-                    break;
-#endif
+//#if RavenRpcHttpProtocol40
+//#else
+//                case MediaType.bson:
+//                    mediaTypeFormatter = new BsonMediaTypeFormatter();
+//                    break;
+//                case MediaType.msgpack:
+//                    mediaTypeFormatter = new MsgPackTypeFormatter();
+//                    break;
+//#endif
                 case MediaType.form:
                     mediaTypeFormatter = new FormUrlEncodedMediaTypeFormatter();
                     break;
@@ -1013,7 +1014,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <returns></returns>
         public delegate void RequestContentDataDelegate(ref object data);
 
-        #region IDispose
+#region IDispose
 
         private bool isDisposed = false;
 
@@ -1049,7 +1050,7 @@ namespace Raven.Rpc.HttpProtocol
             isDisposed = true;
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// 

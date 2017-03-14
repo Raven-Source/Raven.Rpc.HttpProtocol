@@ -1,17 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C68A5C0A-508A-4271-BC22-36DB99D3F104}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.csproj", "{70775EE2-0B61-4E63-8A6A-576130230A6F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.IContractModel", "Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj", "{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.PerformanceTest", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.PerformanceTest\Raven.Rpc.HttpProtocol.PerformanceTest.csproj", "{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPI", "Raven.Rpc.HttpProtocol.Test\Raven.WebAPI\Raven.WebAPI.csproj", "{40A9D509-3654-4C9C-AED3-3FBD001D4258}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPIConsoleApp", "Raven.Rpc.HttpProtocol.Test\Raven.WebAPIConsoleApp\Raven.WebAPIConsoleApp.csproj", "{0BA7212C-584D-4196-A51A-A62BABC333E2}"
 EndProject
@@ -19,13 +13,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol.WinAppTest", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.WinAppTest\Raven.Rpc.HttpProtocol.WinAppTest.csproj", "{9889E3DA-6698-4B4E-968C-10CD7BF81458}"
 EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Raven.Rpc.HttpProtocol.Nodejs", "Raven.Rpc.HttpProtocol.Nodejs\Raven.Rpc.HttpProtocol.Nodejs.njsproj", "{388FBE83-B5AD-499F-95B9-5CA21457390A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.WebAPIWinS", "Raven.WebAPIWinS\Raven.WebAPIWinS.csproj", "{DE8C69D1-8612-4D62-A925-63C64DFA3161}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol40", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol40\Raven.Rpc.HttpProtocol40.csproj", "{F4969C2A-06F6-4B70-97D1-4F6362089FCE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Raven.Rpc.IContractModel", "Raven.Rpc.IContractModel", "{F896F7CE-222C-438D-8796-9E801EC1CC1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol40.Test", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol40.Test\Raven.Rpc.HttpProtocol40.Test.csproj", "{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Raven.Rpc.HttpProtocol", "Raven.Rpc.HttpProtocol", "{2935E732-76EE-41A4-9DE9-AA0BE834708D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raven.Rpc.IContractModel.Dotnet", "Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.Dotnet.csproj", "{E8534332-60F6-4D3E-A12F-107BBEEBBA48}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raven.Rpc.HttpProtocol.AspCore", "Raven.Rpc.HttpProtocol.Test\Raven.Rpc.HttpProtocol.AspCore\Raven.Rpc.HttpProtocol.AspCore.csproj", "{61F55199-E097-4019-ADBA-CBFEABFF29F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raven.Rpc.HttpProtocol.Dotnet", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.Dotnet\Raven.Rpc.HttpProtocol.Dotnet.csproj", "{048D537A-7CF1-4DA5-90C6-921616770A37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.IContractModel", "Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj", "{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Rpc.HttpProtocol", "Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.csproj", "{70775EE2-0B61-4E63-8A6A-576130230A6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,22 +35,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40A9D509-3654-4C9C-AED3-3FBD001D4258}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BA7212C-584D-4196-A51A-A62BABC333E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,33 +51,44 @@ Global
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458}.Release|Any CPU.Build.0 = Release|Any CPU
-		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{388FBE83-B5AD-499F-95B9-5CA21457390A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8C69D1-8612-4D62-A925-63C64DFA3161}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4969C2A-06F6-4B70-97D1-4F6362089FCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8534332-60F6-4D3E-A12F-107BBEEBBA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8534332-60F6-4D3E-A12F-107BBEEBBA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8534332-60F6-4D3E-A12F-107BBEEBBA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8534332-60F6-4D3E-A12F-107BBEEBBA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61F55199-E097-4019-ADBA-CBFEABFF29F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61F55199-E097-4019-ADBA-CBFEABFF29F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61F55199-E097-4019-ADBA-CBFEABFF29F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61F55199-E097-4019-ADBA-CBFEABFF29F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{048D537A-7CF1-4DA5-90C6-921616770A37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{048D537A-7CF1-4DA5-90C6-921616770A37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{048D537A-7CF1-4DA5-90C6-921616770A37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{048D537A-7CF1-4DA5-90C6-921616770A37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70775EE2-0B61-4E63-8A6A-576130230A6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C0F4A71E-53D2-4DD5-9806-5FE2130EAFD3} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
-		{40A9D509-3654-4C9C-AED3-3FBD001D4258} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{0BA7212C-584D-4196-A51A-A62BABC333E2} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{546A14CC-577B-411B-BC6F-605063D9446E} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{9889E3DA-6698-4B4E-968C-10CD7BF81458} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
 		{DE8C69D1-8612-4D62-A925-63C64DFA3161} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
-		{AB5BE731-4F3F-4561-BBD5-9BF11329A6E1} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{E8534332-60F6-4D3E-A12F-107BBEEBBA48} = {F896F7CE-222C-438D-8796-9E801EC1CC1A}
+		{61F55199-E097-4019-ADBA-CBFEABFF29F4} = {C68A5C0A-508A-4271-BC22-36DB99D3F104}
+		{048D537A-7CF1-4DA5-90C6-921616770A37} = {2935E732-76EE-41A4-9DE9-AA0BE834708D}
+		{AB1873C0-6EAD-4089-A3B6-7CB8D68D92F5} = {F896F7CE-222C-438D-8796-9E801EC1CC1A}
+		{70775EE2-0B61-4E63-8A6A-576130230A6F} = {2935E732-76EE-41A4-9DE9-AA0BE834708D}
 	EndGlobalSection
 EndGlobal

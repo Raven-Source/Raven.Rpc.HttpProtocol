@@ -28,12 +28,12 @@ namespace Raven.WebAPIConsoleApp
             );
 
             // 默认返回Json数据
-            //config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 
             //var bson = new BsonMediaTypeFormatter();
             //bson.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/bson"));
             //config.Formatters.Add(bson);
-            config.Formatters.Add(new Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter());
+            //config.Formatters.Add(new Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter());
 
             appBuilder.UseRequestScopeContext();
             appBuilder.UseWebApi(config);

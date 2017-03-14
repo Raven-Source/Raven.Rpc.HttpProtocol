@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Http;
 using System.Collections.Generic;
-using Raven.WebAPI.Models;
+using Raven.WebAPIConsoleApp.Models;
 using Raven.Rpc.HttpProtocol;
 using System.Threading.Tasks;
 
@@ -31,7 +31,7 @@ namespace Raven.Rpc.HttpProtocol.Test
             {
                 _ = valuesApi.Get<ResponseModel<User>>("api/Values/get", timeout: 500);
             }
-            catch (Exception ex)
+            catch
             {
 
             }

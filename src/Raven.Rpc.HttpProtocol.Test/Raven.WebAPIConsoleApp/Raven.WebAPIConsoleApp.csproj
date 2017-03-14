@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Raven.WebAPIConsoleApp</RootNamespace>
     <AssemblyName>Raven.WebAPIConsoleApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -54,12 +54,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MsgPack, Version=0.8.0.0, Culture=neutral, PublicKeyToken=a2625990d5dc0167, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MsgPack.Cli.0.8.0\lib\net45\MsgPack.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\MsgPack.Cli.0.8.1\lib\net46\MsgPack.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -67,10 +65,6 @@
     </Reference>
     <Reference Include="OwinRequestScopeContext, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OwinRequestScopeContext.1.0.1\lib\NET45\OwinRequestScopeContext.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Raven.AspNet.WebApiExtensions, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Raven.AspNet.WebApiExtensions.1.0.6\lib\net45\Raven.AspNet.WebApiExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Raven.AspNetWebApiClient.IContractModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -107,10 +101,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Raven.WebAPI\Models\ResponseModel.cs">
-      <Link>Models\ResponseModel.cs</Link>
-    </Compile>
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Models\ResponseModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -120,9 +112,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
-      <Project>{ab1873c0-6ead-4089-a3b6-7cb8d68d92f5}</Project>
-      <Name>Raven.Rpc.IContractModel</Name>
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.Dotnet.csproj">
+      <Project>{e8534332-60f6-4d3e-a12f-107bbeebba48}</Project>
+      <Name>Raven.Rpc.IContractModel.Dotnet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
