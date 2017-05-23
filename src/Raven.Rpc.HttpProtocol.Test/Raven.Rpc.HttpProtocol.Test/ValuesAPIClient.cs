@@ -10,9 +10,9 @@ namespace Raven.Rpc.HttpProtocol.Test
 {
     public class ValuesAPIClient : RpcHttpClient
     {
-
+        static string host = System.Configuration.ConfigurationManager.AppSettings["host"];
         public ValuesAPIClient(string mediaType)
-            : base("http://127.0.0.1:9002/", timeout: 15000, mediaType: mediaType, decompressionMethods: System.Net.DecompressionMethods.Deflate)
+            : base("", timeout: 15000, mediaType: mediaType, decompressionMethods: System.Net.DecompressionMethods.Deflate)
         {
             //this.OnRequest += ValuesAPIClient_OnRequest;
         }

@@ -22,20 +22,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="..\Raven.Rpc.HttpProtocol\Exceptions\ExceptionOptimize.cs" Link="Exceptions\ExceptionOptimize.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\Exceptions\InvokeTimeoutException.cs" Link="Exceptions\InvokeTimeoutException.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\IRpcHttpClient.cs" Link="IRpcHttpClient.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\IRpcHttpClientAsync.cs" Link="IRpcHttpClientAsync.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\MediaType.cs" Link="MediaType.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\RpcContext.cs" Link="RpcContext.cs" />
-    <Compile Include="..\Raven.Rpc.HttpProtocol\RpcHttpClient.cs" Link="RpcHttpClient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.1" />
   </ItemGroup>
@@ -51,5 +37,5 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.3" />
   </ItemGroup>
-
+  
 </Project>

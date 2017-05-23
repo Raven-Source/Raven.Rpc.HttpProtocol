@@ -11,7 +11,7 @@ namespace Raven.WebAPIConsoleApp
     {
         static void Main(string[] args)
         {
-            var host = "http://127.0.0.1:9002/";
+            var host = System.Configuration.ConfigurationManager.AppSettings["host"];
             using (Microsoft.Owin.Hosting.WebApp.Start<Startup>(host))
             {
 

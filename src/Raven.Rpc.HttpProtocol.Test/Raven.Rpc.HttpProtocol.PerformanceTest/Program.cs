@@ -12,6 +12,10 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
 {
     class Program
     {
+
+        static string[] host = System.Configuration.ConfigurationManager.AppSettings["host"].Split(',');
+        static Random random = new Random(DateTime.Now.Millisecond);
+
         static ValuesAPIClient valuesApi_json = new ValuesAPIClient(MediaType.json);
         static ValuesAPIClient valuesApi_bson = new ValuesAPIClient(MediaType.bson);
         static void Main(string[] args)
@@ -22,24 +26,28 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
             Console.ReadLine();
         }
 
-
+        private static string GetHost()
+        {
+            var index = random.Next(0, host.Length);
+            return host[index];
+        }
 
         void Get()
         {
             int seed = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["seed"]);
             try
             {
-                var result2 = valuesApi_json.GetAsync<ResponseModel<User>>("api/Values/Get/1", timeout: 1000).Result;
+                var result2 = valuesApi_json.GetAsync<ResponseModel<User>>(GetHost() + "api/Values/Get/1", timeout: 1000).Result;
             }
-            catch 
+            catch
             {
                 ;
             }
-            var result3 = valuesApi_bson.GetAsync<ResponseModel>("api/Values/Get/1").Result;
+            var result3 = valuesApi_bson.GetAsync<ResponseModel>(GetHost() + "api/Values/Get/1").Result;
 
             //valuesApi_bson.Send<ResponseModel, object>("api/Values/Get/1");
 
-            
+
 
             Stopwatch sw = new Stopwatch();
 
@@ -48,7 +56,7 @@ namespace Raven.Rpc.HttpProtocol.PerformanceTest
             sw.Restart();
             for (var i = 0; i < seed; i++)
             {
-                taskList[i] = valuesApi_json.GetAsync<string>("api/Values/Get3", timeout: 15000);
+                taskList[i] = valuesApi_json.GetAsync<string>(GetHost() + "api/Values/Get3", timeout: 15000);
             }
             Task.WaitAll(taskList);
             sw.Stop();

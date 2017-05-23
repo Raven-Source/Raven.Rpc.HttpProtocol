@@ -66,7 +66,7 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="handler">内部调用Dispose</param>
         public RpcHttpClient(string baseUrl, Encoding encoding, HttpClientHandler handler, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
-#if net45
+#if net45 || net46
             var defaultConnectionLimit = Environment.ProcessorCount * 6;
             if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
             {
@@ -166,10 +166,10 @@ namespace Raven.Rpc.HttpProtocol
                 client.Timeout = TimeSpan.FromMilliseconds(this._timeout);
             }
 
-            if (!string.IsNullOrWhiteSpace(_baseUrl))
-            {
-                client.BaseAddress = new Uri(_baseUrl);
-            }
+            //if (!string.IsNullOrWhiteSpace(_baseUrl))
+            //{
+            //    client.BaseAddress = new Uri(_baseUrl);
+            //}
             client.DefaultRequestHeaders.Accept.Add(_mediaTypeWithQualityHeaderValue);
             client.DefaultRequestHeaders.Connection.Add("keep-alive");
 
