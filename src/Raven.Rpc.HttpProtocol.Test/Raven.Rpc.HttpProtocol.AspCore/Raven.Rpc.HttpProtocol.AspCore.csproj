@@ -1,16 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\Raven.WebAPIConsoleApp\Models\ResponseModel.cs" Link="ResponseModel.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
@@ -21,7 +18,7 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.Dotnet.csproj" />
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.csproj" />
   </ItemGroup>
 
 </Project>

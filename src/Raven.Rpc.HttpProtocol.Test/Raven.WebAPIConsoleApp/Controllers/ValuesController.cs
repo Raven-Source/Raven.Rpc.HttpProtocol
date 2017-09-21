@@ -4,17 +4,30 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+#if NETCOREAPP2_0
+using Microsoft.AspNetCore.Mvc;
+#else
 using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
+#endif
 using System.Web;
-using Owin;
-using Raven.WebAPIConsoleApp.Models;
 
+using Raven.WebAPIConsoleApp.Models;
+#if NETCOREAPP2_0
+namespace Raven.WebAPIConsoleApp.netcore.Controllers
+#else
 namespace Raven.WebAPI.Controllers
+#endif
+
 {
     //[Raven.AspNet.WebApiExtensions.Attributes.Compression]
-    public class ValuesController : ApiController
+    public class ValuesController
+#if NETCOREAPP2_0
+        : Controller
+#else
+        : ApiController
+#endif
     {
         // GET api/values/5
         [HttpGet]
@@ -68,13 +81,13 @@ namespace Raven.WebAPI.Controllers
 
     }
 
-    public class BytesDataAttribute : ActionFilterAttribute
-    {
-        public override void OnActionExecuting(HttpActionContext actionContext)
-        {
-            //actionContext.Request.RequestUri.DnsSafeHost
-            base.OnActionExecuting(actionContext);
-        }
-    }
+    //public class BytesDataAttribute : ActionFilterAttribute
+    //{
+    //    public override void OnActionExecuting(HttpActionContext actionContext)
+    //    {
+    //        //actionContext.Request.RequestUri.DnsSafeHost
+    //        base.OnActionExecuting(actionContext);
+    //    }
+    //}
 
 }

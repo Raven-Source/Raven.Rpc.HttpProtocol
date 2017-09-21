@@ -34,10 +34,9 @@ namespace Raven.WebAPIConsoleApp
             //bson.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/bson"));
             //config.Formatters.Add(bson);
             //config.Formatters.Add(new Raven.AspNet.WebApiExtensions.Formatters.MsgPackFormatter());
-
-            appBuilder.UseRequestScopeContext();
-            appBuilder.UseWebApi(config);
             
+            appBuilder.UseWebApi(config);
+
             //CallContext
             //appBuilder.Use(
         }

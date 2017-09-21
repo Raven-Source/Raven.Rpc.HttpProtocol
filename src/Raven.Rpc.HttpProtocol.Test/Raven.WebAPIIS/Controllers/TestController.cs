@@ -16,8 +16,7 @@ namespace Raven.WebAPI.Controllers
         {
             int workerThreads, completionPortThreads;
             ThreadPool.GetAvailableThreads(out workerThreads, out completionPortThreads);
-            return await Task.FromResult<string>(WebAPI.Controllers.ValuesController.location.ToString()
-                + "workerThreads:" + workerThreads + ",completionPortThreads:" + completionPortThreads);
+            return await Task.FromResult<string>("workerThreads:" + workerThreads + ",completionPortThreads:" + completionPortThreads);
         }
     }
 }

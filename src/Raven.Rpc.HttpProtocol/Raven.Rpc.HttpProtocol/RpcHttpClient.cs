@@ -1,4 +1,4 @@
-﻿//#if net45
+﻿//#if NET45 || NET46
 //using Raven.Rpc.HttpProtocol.Formatters;
 //#else
 //#endif
@@ -18,10 +18,10 @@ namespace Raven.Rpc.HttpProtocol
     /// <summary>
     /// 
     /// </summary>
-    public class RpcHttpClient : IRpcHttpClient, IRpcHttpClientAsync, IDisposable
+    public class RpcHttpClient : IRpcHttpClient, IDisposable
     //where RT : class, new()
     {
-        private const int defalut_timeout = 10000;
+        private const int DEFALUT_TIMEOUT = 10000;
 
         private string _baseUrl;
         private int _timeout;
@@ -36,7 +36,7 @@ namespace Raven.Rpc.HttpProtocol
         private static MediaTypeFormatter[] _mediaTypeFormatterArray = new MediaTypeFormatter[]
         {
             new JsonMediaTypeFormatter(),
-//#if net45
+//#if NET45 || NET46
 //            new BsonMediaTypeFormatter(),
 //            new MsgPackTypeFormatter(),
 //#else
@@ -45,6 +45,17 @@ namespace Raven.Rpc.HttpProtocol
             new XmlMediaTypeFormatter(),
         };
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
+        public RpcHttpClient(IRpcHttpClientOptions options)
+            : this(options.BaseUrl, options.Encoding, options.Handler, options.MediaType, options.Timeout, options.DecompressionMethods)
+        {
+
+        }
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -52,7 +63,8 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="mediaType"></param>
         /// <param name="timeout">超时时间（毫秒）</param>
         /// <param name="decompressionMethods"></param>
-        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate) : this(baseUrl, null, null, mediaType, timeout, decompressionMethods)
+        public RpcHttpClient(string baseUrl, string mediaType = MediaType.json, int timeout = DEFALUT_TIMEOUT, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
+            : this(baseUrl, null, null, mediaType, timeout, decompressionMethods)
         { }
 
         /// <summary>
@@ -64,18 +76,15 @@ namespace Raven.Rpc.HttpProtocol
         /// <param name="decompressionMethods"></param>
         /// <param name="encoding">默认UTF8</param>
         /// <param name="handler">内部调用Dispose</param>
-        public RpcHttpClient(string baseUrl, Encoding encoding, HttpClientHandler handler, string mediaType = MediaType.json, int timeout = defalut_timeout, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
+        public RpcHttpClient(string baseUrl, Encoding encoding, HttpClientHandler handler, string mediaType = MediaType.json, int timeout = DEFALUT_TIMEOUT, DecompressionMethods decompressionMethods = DecompressionMethods.Deflate)
         {
-#if net45 || net46
             var defaultConnectionLimit = Environment.ProcessorCount * 6;
             if (defaultConnectionLimit > System.Net.ServicePointManager.DefaultConnectionLimit)
             {
                 System.Net.ServicePointManager.DefaultConnectionLimit = defaultConnectionLimit;
             }
-#endif
-
             this._baseUrl = baseUrl;
-            this._timeout = timeout > 0 ? timeout : defalut_timeout;
+            this._timeout = timeout > 0 ? timeout : DEFALUT_TIMEOUT;
             _mediaType = mediaType;
             _mediaTypeFormatter = CreateMediaTypeFormatter(mediaType);
             _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue(mediaType);
@@ -115,15 +124,15 @@ namespace Raven.Rpc.HttpProtocol
             MediaTypeFormatter mediaTypeFormatter = null;
             switch (mediaType)
             {
-//#if RavenRpcHttpProtocol40
-//#else
-//                case MediaType.bson:
-//                    mediaTypeFormatter = new BsonMediaTypeFormatter();
-//                    break;
-//                case MediaType.msgpack:
-//                    mediaTypeFormatter = new MsgPackTypeFormatter();
-//                    break;
-//#endif
+                //#if RavenRpcHttpProtocol40
+                //#else
+                //                case MediaType.bson:
+                //                    mediaTypeFormatter = new BsonMediaTypeFormatter();
+                //                    break;
+                //                case MediaType.msgpack:
+                //                    mediaTypeFormatter = new MsgPackTypeFormatter();
+                //                    break;
+                //#endif
                 case MediaType.form:
                     mediaTypeFormatter = new FormUrlEncodedMediaTypeFormatter();
                     break;
@@ -171,7 +180,7 @@ namespace Raven.Rpc.HttpProtocol
             //    client.BaseAddress = new Uri(_baseUrl);
             //}
             client.DefaultRequestHeaders.Accept.Add(_mediaTypeWithQualityHeaderValue);
-            client.DefaultRequestHeaders.Connection.Add("keep-alive");
+            //client.DefaultRequestHeaders.Connection.Add("keep-alive");
 
             return client;
         }
@@ -180,15 +189,15 @@ namespace Raven.Rpc.HttpProtocol
         /// 
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="url"></param>
+        /// <param name="relativeUrl"></param>
         /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> InvokeAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual Task<TResult> InvokeAsync<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<object, TResult>(url, null, urlParameters, httpMethod, timeout);
+            return InvokeAsync<object, TResult>(relativeUrl, null, urlParameters, httpMethod, timeout);
         }
 
         /// <summary>
@@ -196,19 +205,19 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="url"></param>
-        /// <param name="data"></param>
+        /// <param name="relativeUrl"></param>
+        /// <param name="contentData"></param>
         /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual async Task<TResult> InvokeAsync<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual async Task<TResult> InvokeAsync<TData, TResult>(string relativeUrl, TData contentData = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
             //using (var client = this.InitHttpClient(timeout))
             //{
-            string requestUrl = _baseUrl + url;
+            string requestUrl = GetBaseUrl() + relativeUrl;
             CreateUrlParams(urlParameters, ref requestUrl);
             HttpContent content = null;
             using (HttpRequestMessage request = new HttpRequestMessage())
@@ -216,26 +225,24 @@ namespace Raven.Rpc.HttpProtocol
                 request.Method = httpMethod ?? HttpMethod.Post;
                 request.RequestUri = new Uri(requestUrl);
 
-                object contentData = data as object;
-                if (RequestContentDataHandler != null)
-                {
-                    RequestContentDataHandler(ref contentData);
-                }
+                object contentDataObj = contentData as object;
+                RequestContentDataHandler?.Invoke(ref contentDataObj);
 
-                if (contentData != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
+                if (contentDataObj != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
                 {
-                    content = CreateContent(contentData);
+                    content = CreateContent(contentDataObj);
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
 
-                RpcContext rpcContext = new RpcContext();
-                rpcContext.RequestModel = contentData;
-                // OnSend
-                if (OnRequest != null)
+                RpcContext rpcContext = new RpcContext()
                 {
-                    OnRequest(request, rpcContext);
-                }
+                    RequestModel = contentDataObj
+                };
+
+                // OnSend
+                OnRequest?.Invoke(request, rpcContext);
+
                 HttpResponseMessage response = null;
 
                 try
@@ -268,10 +275,7 @@ namespace Raven.Rpc.HttpProtocol
                     rpcContext.ResponseModel = result;
                     rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
 
-                    if (OnResponse != null)
-                    {
-                        OnResponse(response, rpcContext);
-                    }
+                    OnResponse?.Invoke(response, rpcContext);
 
                     return result;
 
@@ -317,15 +321,15 @@ namespace Raven.Rpc.HttpProtocol
         /// 
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="url"></param>
+        /// <param name="relativeUrl"></param>
         /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Invoke<TResult>(string url, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual TResult Invoke<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<object, TResult>(url, null, urlParameters, httpMethod, timeout);
+            return Invoke<object, TResult>(relativeUrl, null, urlParameters, httpMethod, timeout);
         }
 
         /// <summary>
@@ -333,19 +337,19 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="url"></param>
-        /// <param name="data"></param>
+        /// <param name="relativeUrl"></param>
+        /// <param name="contentData"></param>
         /// <param name="httpMethod">默认Post</param>
         /// <param name="urlParameters"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Invoke<TData, TResult>(string url, TData data = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
+        public virtual TResult Invoke<TData, TResult>(string relativeUrl, TData contentData = default(TData), IDictionary<string, string> urlParameters = null, HttpMethod httpMethod = null, int? timeout = null)
             where TResult : class
         {
             var client = _httpClient;
             //using (var client = this.InitHttpClient(timeout))
             //{
-            string requestUrl = _baseUrl + url;
+            string requestUrl = GetBaseUrl() + relativeUrl;
             CreateUrlParams(urlParameters, ref requestUrl);
             HttpContent content = null;
             using (HttpRequestMessage request = new HttpRequestMessage())
@@ -353,26 +357,24 @@ namespace Raven.Rpc.HttpProtocol
                 request.Method = httpMethod ?? HttpMethod.Post;
                 request.RequestUri = new Uri(requestUrl);
 
-                object contentData = data as object;
-                if (RequestContentDataHandler != null)
-                {
-                    RequestContentDataHandler(ref contentData);
-                }
+                object contentDataObj = contentData as object;
 
-                if (contentData != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
+                RequestContentDataHandler?.Invoke(ref contentDataObj);
+
+                if (contentDataObj != null && (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put))
                 {
-                    content = CreateContent(contentData);
+                    content = CreateContent(contentDataObj);
                     request.Content = content;
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue(_mediaType);
                 }
 
-                RpcContext rpcContext = new RpcContext();
-                rpcContext.RequestModel = contentData;
-                // OnSend
-                if (OnRequest != null)
+                RpcContext rpcContext = new RpcContext()
                 {
-                    OnRequest(request, rpcContext);
-                }
+                    RequestModel = contentDataObj
+                };
+                // OnSend
+                OnRequest?.Invoke(request, rpcContext);
+
                 HttpResponseMessage response = null;
 
                 try
@@ -406,10 +408,7 @@ namespace Raven.Rpc.HttpProtocol
                     rpcContext.ResponseModel = result;
                     rpcContext.ResponseSize = response.Content.Headers.ContentLength ?? 0;
 
-                    if (OnResponse != null)
-                    {
-                        OnResponse(response, rpcContext);
-                    }
+                    OnResponse?.Invoke(response, rpcContext);
 
                     return result;
 
@@ -454,28 +453,28 @@ namespace Raven.Rpc.HttpProtocol
         /// Get
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
+        /// <param name="relativeUrl">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Get<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Get<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<TResult>(url, urlParameters, HttpMethod.Get, timeout);
+            return Invoke<TResult>(relativeUrl, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
         /// Get
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
+        /// <param name="relativeUrl">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> GetAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> GetAsync<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<TResult>(url, urlParameters, HttpMethod.Get, timeout);
+            return InvokeAsync<TResult>(relativeUrl, urlParameters, HttpMethod.Get, timeout);
         }
 
         /// <summary>
@@ -483,15 +482,15 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData">提交数据类型</typeparam>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual TResult Post<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Post<TData, TResult>(string relativeUrl, TData contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<TData, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -499,109 +498,109 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData">提交数据类型</typeparam>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual Task<TResult> PostAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TData, TResult>(string relativeUrl, TData contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<TData, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual TResult Post<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Post<TResult>(string relativeUrl, byte[] contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Post<TResult>(url, data, 0, data.Length, urlParameters, timeout);
+            return Post<TResult>(relativeUrl, contentData, 0, contentData.Length, urlParameters, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual Task<TResult> PostAsync<TResult>(string url, byte[] data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TResult>(string relativeUrl, byte[] contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return PostAsync<TResult>(url, data, 0, data.Length, urlParameters, timeout);
+            return PostAsync<TResult>(relativeUrl, contentData, 0, contentData.Length, urlParameters, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="offset">偏移</param>
         /// <param name="count">数量</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual TResult Post<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Post<TResult>(string relativeUrl, byte[] contentData, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<byte[], TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="offset">偏移</param>
         /// <param name="count">数量</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout">超时时间</param>
         /// <returns></returns>
-        public virtual Task<TResult> PostAsync<TResult>(string url, byte[] data, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TResult>(string relativeUrl, byte[] contentData, int offset, int count, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<byte[], TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<byte[], TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Post<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Post<TResult>(string relativeUrl, IDictionary<string, string> contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return Invoke<IDictionary<string, string>, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
         /// Post
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PostAsync<TResult>(string relativeUrl, IDictionary<string, string> contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Post, timeout);
+            return InvokeAsync<IDictionary<string, string>, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Post, timeout);
         }
 
         /// <summary>
@@ -609,15 +608,15 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData">提交数据类型</typeparam>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Put<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Put<TData, TResult>(string relativeUrl, TData contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return Invoke<TData, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
@@ -625,73 +624,82 @@ namespace Raven.Rpc.HttpProtocol
         /// </summary>
         /// <typeparam name="TData">提交数据类型</typeparam>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> PutAsync<TData, TResult>(string url, TData data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PutAsync<TData, TResult>(string relativeUrl, TData contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<TData, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return InvokeAsync<TData, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
         /// Put
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">url parameter 数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">url parameter 数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Put<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Put<TResult>(string relativeUrl, IDictionary<string, string> contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return Invoke<IDictionary<string, string>, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
         /// Put
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
-        /// <param name="data">url parameter 数据</param>
+        /// <param name="relativeUrl">请求Url</param>
+        /// <param name="contentData">url parameter 数据</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> data, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> PutAsync<TResult>(string relativeUrl, IDictionary<string, string> contentData, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<IDictionary<string, string>, TResult>(url, data, urlParameters, HttpMethod.Put, timeout);
+            return InvokeAsync<IDictionary<string, string>, TResult>(relativeUrl, contentData, urlParameters, HttpMethod.Put, timeout);
         }
 
         /// <summary>
         /// Delete
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
+        /// <param name="relativeUrl">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual TResult Delete<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual TResult Delete<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return Invoke<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
+            return Invoke<TResult>(relativeUrl, urlParameters, HttpMethod.Delete, timeout);
         }
 
         /// <summary>
         /// Delete
         /// </summary>
         /// <typeparam name="TResult">返回数据类型</typeparam>
-        /// <param name="url">请求Url</param>
+        /// <param name="relativeUrl">请求Url</param>
         /// <param name="urlParameters">url parameter 数据</param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public virtual Task<TResult> DeleteAsync<TResult>(string url, IDictionary<string, string> urlParameters = null, int? timeout = null)
+        public virtual Task<TResult> DeleteAsync<TResult>(string relativeUrl, IDictionary<string, string> urlParameters = null, int? timeout = null)
             where TResult : class
         {
-            return InvokeAsync<TResult>(url, urlParameters, HttpMethod.Delete, timeout);
+            return InvokeAsync<TResult>(relativeUrl, urlParameters, HttpMethod.Delete, timeout);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private string GetBaseUrl()
+        {
+            return _baseUrl;
         }
 
         /// <summary>
@@ -747,25 +755,25 @@ namespace Raven.Rpc.HttpProtocol
         /// 
         /// </summary>
         /// <typeparam name="TData"></typeparam>
-        /// <param name="data"></param>
+        /// <param name="contentData"></param>
         /// <returns></returns>
-        private HttpContent CreateContent<TData>(TData data)
+        private HttpContent CreateContent<TData>(TData contentData)
         {
             HttpContent httpContent = null;
             //RequestContentDataHandler(ref contentData);
-            Type type = data.GetType();
+            Type type = contentData.GetType();
 
             var fullName = type.FullName;
             switch (fullName)
             {
                 case "System.String":
-                    httpContent = new StringContent(data.ToString(), _defaultEncoding, _mediaType);
+                    httpContent = new StringContent(contentData.ToString(), _defaultEncoding, _mediaType);
                     break;
                 case "System.Byte[]":
-                    httpContent = new ByteArrayContent(data as byte[]);
+                    httpContent = new ByteArrayContent(contentData as byte[]);
                     break;
                 default:
-                    httpContent = new ObjectContent(type, data, _mediaTypeFormatter);
+                    httpContent = new ObjectContent(type, contentData, _mediaTypeFormatter);
                     break;
             }
             return httpContent;
@@ -849,7 +857,11 @@ namespace Raven.Rpc.HttpProtocol
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
         private string CreateErrorResponseMessage(HttpResponseMessage response)
         {
             return string.Format("ReasonPhrase:{0},StatusCode:{1}", response.ReasonPhrase, (int)response.StatusCode);
@@ -869,10 +881,7 @@ namespace Raven.Rpc.HttpProtocol
 
             //IDictionary<string, string> dp = null;
             //dp = FurnishDefaultParameters();
-            if (DefaultUrlParametersHandler != null)
-            {
-                DefaultUrlParametersHandler(ref urlParameters);
-            }
+            DefaultUrlParametersHandler?.Invoke(ref urlParameters);
 
             //DefaultUrlParametersHandler(ref urlParameters);
 
@@ -886,21 +895,7 @@ namespace Raven.Rpc.HttpProtocol
             //}
         }
 
-        ///// <summary>
-        ///// 请求前，请求header定义
-        ///// </summary>
-        ///// <param name="headers"></param>
-        //protected virtual void DefaultRequestHeadersHandler(HttpRequestHeaders headers)
-        //{
-        //}
-
-        ///// <summary>
-        ///// Send数据前
-        ///// </summary>
-        ///// <param name="request"></param>
-        //protected virtual void OnSend(HttpRequestMessage request)
-        //{
-        //}
+        #region Delegate
 
         /// <summary>
         /// 请求前
@@ -950,39 +945,6 @@ namespace Raven.Rpc.HttpProtocol
         /// <returns></returns>
         public delegate object ErrorResponseDelegate(Exception origEx, RpcContext rpcContext);
 
-        ///// <summary>
-        ///// 异常处理
-        ///// </summary>
-        ///// <typeparam name="TResult"></typeparam>
-        ///// <param name="result"></param>
-        ///// <param name="httpResponse"></param>
-        //protected virtual TResult ErrorResponseHandler<TResult>(TResult result, HttpResponseMessage httpResponse)
-        //    where TResult : class
-        //{
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// 异常处理 事件
-        ///// </summary>
-        //public event ErrorResponseDelegate ErrorResponseHandler;
-        ///// <summary>
-        ///// 异常处理
-        ///// </summary>
-        ///// <param name="result"></param>
-        ///// <param name="httpResponse"></param>
-        ///// <returns></returns>
-        //public delegate object ErrorResponseDelegate(object result, HttpResponseMessage httpResponse);
-
-        ///// <summary>
-        ///// Url默认参数处理
-        ///// </summary>
-        ///// <param name="urlParameters"></param>
-        //protected virtual IDictionary<string, string> DefaultUrlParametersHandler(IDictionary<string, string> urlParameters)
-        //{
-        //    return urlParameters;
-        //}
-
         /// <summary>
         /// Url默认参数处理 事件
         /// </summary>
@@ -997,10 +959,10 @@ namespace Raven.Rpc.HttpProtocol
         ///// <summary>
         ///// 请求数据处理
         ///// </summary>
-        ///// <param name="data"></param>
-        //protected virtual object RequestContentDataHandler(object data)
+        ///// <param name="contentData"></param>
+        //protected virtual object RequestContentDataHandler(object contentData)
         //{
-        //    return data;
+        //    return contentData;
         //}
 
         /// <summary>
@@ -1010,11 +972,13 @@ namespace Raven.Rpc.HttpProtocol
         /// <summary>
         /// 请求数据处理
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="contentData"></param>
         /// <returns></returns>
-        public delegate void RequestContentDataDelegate(ref object data);
+        public delegate void RequestContentDataDelegate(ref object contentData);
 
-#region IDispose
+        #endregion
+
+        #region IDispose
 
         private bool isDisposed = false;
 
@@ -1050,8 +1014,6 @@ namespace Raven.Rpc.HttpProtocol
             isDisposed = true;
         }
 
-#endregion
-
         /// <summary>
         /// 
         /// </summary>
@@ -1059,5 +1021,7 @@ namespace Raven.Rpc.HttpProtocol
         {
             Dispose(false);
         }
+
+        #endregion
     }
 }

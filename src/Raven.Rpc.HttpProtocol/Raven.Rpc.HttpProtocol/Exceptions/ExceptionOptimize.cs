@@ -16,8 +16,7 @@ namespace Raven.Rpc.HttpProtocol.Exceptions
         /// <returns></returns>
         internal static Exception Filter(Exception ex)
         {
-            var aggrExc = ex as AggregateException;
-            if (aggrExc != null)
+            if (ex is AggregateException aggrExc)
             {
                 if (aggrExc.InnerException is TaskCanceledException || aggrExc.InnerExceptions.Any(x => x is TaskCanceledException))
                 {
@@ -26,6 +25,19 @@ namespace Raven.Rpc.HttpProtocol.Exceptions
 
             }
             return ex;
+        }
+
+        internal static string GetExceptionMessage(Exception exception)
+        {
+            if (exception == null)
+                return string.Empty;
+
+            var message = exception.Message;
+            if (exception.InnerException != null)
+            {
+                message += "|InnerException:" + GetExceptionMessage(exception.InnerException);
+            }
+            return message;
         }
     }
 }

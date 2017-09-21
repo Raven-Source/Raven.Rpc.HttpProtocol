@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -109,13 +109,15 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.Dotnet.csproj">
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
       <Project>{e8534332-60f6-4d3e-a12f-107bbeebba48}</Project>
-      <Name>Raven.Rpc.IContractModel.Dotnet</Name>
+      <Name>Raven.Rpc.IContractModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

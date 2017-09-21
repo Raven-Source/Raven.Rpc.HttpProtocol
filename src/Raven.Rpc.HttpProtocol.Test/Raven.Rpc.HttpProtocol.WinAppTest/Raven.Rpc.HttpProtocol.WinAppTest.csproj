@@ -108,7 +108,7 @@
       <Project>{048d537a-7cf1-4da5-90c6-921616770a37}</Project>
       <Name>Raven.Rpc.HttpProtocol.Dotnet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.Dotnet.csproj">
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.csproj">
       <Project>{e8534332-60f6-4d3e-a12f-107bbeebba48}</Project>
       <Name>Raven.Rpc.IContractModel.Dotnet</Name>
     </ProjectReference>
