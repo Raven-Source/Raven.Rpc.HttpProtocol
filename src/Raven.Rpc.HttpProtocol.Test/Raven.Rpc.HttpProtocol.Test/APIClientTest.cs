@@ -16,8 +16,10 @@ namespace Raven.Rpc.HttpProtocol.Test
         {
             ValuesAPIClient valuesApi = new ValuesAPIClient(MediaType.json);
 
-            var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
 
+            var result = await valuesApi.GetAsync<ResponseModel<User>>("api/Values/get");
+
+            var result2 = valuesApi.Get<ResponseModel<User>>("api/Values/get");
             Assert.AreEqual(result2.Data.Name, "ResponseModel-Get");
 
             var a = valuesApi.Get<List<User>>("api/Values/get2");

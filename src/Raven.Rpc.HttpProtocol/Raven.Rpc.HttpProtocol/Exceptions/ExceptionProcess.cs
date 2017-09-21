@@ -27,6 +27,10 @@ namespace Raven.Rpc.HttpProtocol.Exceptions
                 }
 
             }
+            else if (ex is TaskCanceledException)
+            {
+                return new InvokeTimeoutException();
+            }
             return ex;
         }
     }
