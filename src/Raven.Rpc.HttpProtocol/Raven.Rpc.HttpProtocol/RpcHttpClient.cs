@@ -160,6 +160,7 @@ namespace Raven.Rpc.HttpProtocol
                 _handler.AutomaticDecompression = _decompressionMethods;
                 //client = new HttpClient(new HttpClientHandler() { AutomaticDecompression = _decompressionMethods });
             }
+
             client = new HttpClient(_handler);
             if (_decompressionMethods != DecompressionMethods.None)
             {

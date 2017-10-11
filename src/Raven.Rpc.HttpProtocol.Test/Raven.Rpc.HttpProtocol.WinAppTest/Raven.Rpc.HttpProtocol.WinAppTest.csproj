@@ -34,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -104,11 +104,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.Dotnet\Raven.Rpc.HttpProtocol.Dotnet.csproj">
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol\Raven.Rpc.HttpProtocol.csproj">
       <Project>{048d537a-7cf1-4da5-90c6-921616770a37}</Project>
       <Name>Raven.Rpc.HttpProtocol.Dotnet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel.Dotnet\Raven.Rpc.IContractModel.csproj">
+    <ProjectReference Include="..\..\Raven.Rpc.HttpProtocol\Raven.Rpc.IContractModel\Raven.Rpc.IContractModel.csproj">
       <Project>{e8534332-60f6-4d3e-a12f-107bbeebba48}</Project>
       <Name>Raven.Rpc.IContractModel.Dotnet</Name>
     </ProjectReference>

@@ -9,16 +9,16 @@ namespace Raven.Rpc.HttpProtocol.Messages
     /// <summary>
     /// 
     /// </summary>
-    public class InvokeResultMessage
+    public class InvokeResultMessage<T>
     {
         /// <summary>
         /// 
         /// </summary>
-        public string ExceptionMessage { get; set; }
+        public string Exception { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public object Result { get; set; }
+        public T Result { get; set; }
     }
 }

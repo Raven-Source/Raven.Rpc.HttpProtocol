@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net46;net47;netstandard1.6;netstandard1.6;</TargetFrameworks>
+    <TargetFrameworks>net45;net46;netstandard1.6;</TargetFrameworks>
     <RootNamespace>Raven.Rpc.IContractModel</RootNamespace>
     <AssemblyName>Raven.Rpc.IContractModel</AssemblyName>
     <Authors>Yi.Liang</Authors>
@@ -28,14 +28,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
     <DocumentationFile>bin\Debug\net46\Raven.Rpc.IContractModel.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net47|AnyCPU'">
-    <DocumentationFile>bin\Debug\net47\Raven.Rpc.IContractModel.xml</DocumentationFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.6|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard1.6\Raven.Rpc.IContractModel.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45|net46|net47' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45|net46' ">
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   

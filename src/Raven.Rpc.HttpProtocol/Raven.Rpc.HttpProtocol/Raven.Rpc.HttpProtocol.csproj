@@ -5,7 +5,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <TargetFrameworks>net45;net46;net47;netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>net45;net46;netstandard2.0;</TargetFrameworks>
     <RootNamespace>Raven.Rpc.HttpProtocol</RootNamespace>
     <AssemblyName>Raven.Rpc.HttpProtocol</AssemblyName>
     <Authors>Raven.Rpc.HttpProtocol</Authors>
@@ -25,6 +25,22 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.3" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.3" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Addresses\**" />
     <Compile Remove="Messages\**" />
     <Compile Remove="Routing\**" />
@@ -37,20 +53,6 @@
     <None Remove="Messages\**" />
     <None Remove="Routing\**" />
     <None Remove="Runtime\**" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="System.Net.Http" Version="4.3.2" />
-    <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.5" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="WinInsider.System.Net.Http.Formatting" Version="1.0.2" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.3" />
   </ItemGroup>
   
 </Project>

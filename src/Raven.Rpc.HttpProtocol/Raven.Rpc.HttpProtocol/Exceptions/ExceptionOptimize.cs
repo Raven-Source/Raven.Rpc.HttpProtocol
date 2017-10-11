@@ -16,7 +16,11 @@ namespace Raven.Rpc.HttpProtocol.Exceptions
         /// <returns></returns>
         internal static Exception Filter(Exception ex)
         {
-            if (ex is AggregateException aggrExc)
+            if (ex is TaskCanceledException)
+            {
+                return new InvokeTimeoutException();
+            }
+            else if (ex is AggregateException aggrExc)
             {
                 if (aggrExc.InnerException is TaskCanceledException || aggrExc.InnerExceptions.Any(x => x is TaskCanceledException))
                 {
